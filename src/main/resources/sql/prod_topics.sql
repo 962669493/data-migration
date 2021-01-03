@@ -1,0 +1,2 @@
+SELECT id, tid, page_forum, page_forum_tree_code, page_forum_name, assign_forum, assign_forum_tree_code, assign_forum_name, reply_status, audit_status, auth_status, plan_id, production_standards_id, term_num, query, title, `desc`, sex, age, status, create_on, update_time, title_hash, is_deleted, feedback_count
+FROM prod_topics
