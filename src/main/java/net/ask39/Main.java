@@ -19,6 +19,6 @@ public class Main implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        new ProdTopicsMigration("sql/prod_topics.sql", "C:/Users/zhangzheng/Desktop/39/prod_topics.txt").reader();
+        new ProdTopicsMigration("sql/prod_topics.sql", "C:/Users/zhangzheng/Desktop/39/prod_topics.txt").migration();
     }
 }

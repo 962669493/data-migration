@@ -1,8 +1,10 @@
 package net.ask39.prod_topics.service.impl;
 
 import net.ask39.service.AbstractMigration;
+import net.ask39.utils.MyUtils;
 
 import java.io.FileNotFoundException;
+import java.sql.Timestamp;
 
 /**
  * 帖子表数据迁移
@@ -16,7 +18,11 @@ public class ProdTopicsMigration extends AbstractMigration {
     }
 
     @Override
-    protected Object transfer(String columnName, Object columnValue) {
+    protected Object convert(String columnName, Object columnValue) {
+        if(columnValue instanceof Timestamp){
+            Timestamp timestamp = (Timestamp) columnValue;
+            return MyUtils.ldt2Str(timestamp.toLocalDateTime());
+        }
         return columnValue;
     }
 }

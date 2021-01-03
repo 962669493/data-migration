@@ -1,6 +1,7 @@
 package net.ask39.service;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Stopwatch;
 import net.ask39.enums.MyConstants;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
@@ -11,14 +12,15 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 /**
- * 帖子数据迁移
+ * 数据迁移
  *
  * @author zhangzheng
  * @date 2021-01-03
  **/
-public abstract class AbstractMigration implements IMigration<String> {
+public abstract class AbstractMigration {
 
     /**
      * 查询sql的文件名称
@@ -36,23 +38,31 @@ public abstract class AbstractMigration implements IMigration<String> {
 
     private final Logger log= LoggerFactory.getLogger(AbstractMigration.class);
 
-    @Override
-    public void reader() throws IOException {
+    public void migration() throws IOException {
+        log.info("开始运行class[{}]", this.getClass().getName());
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
         SqlRowSet sqlRowSet = MyUtils.getJdbcTemplate().queryForRowSet(getSql(sqlFileName));
-        while(sqlRowSet.next()) {
+        for (int i = 0,k = 0; sqlRowSet.next(); i++) {
+            if(i % MyConstants.FETCH_SIZE == 0){
+                k++;
+                outputStream.flush();
+                log.info("开始进行第[{}]个批次的迁移", k);
+            }
             SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
             int columnCount = metaData.getColumnCount();
             Object[] row = new Object[columnCount + 1];
             for (int j = 0; j < columnCount; j++) {
                 String columnName = metaData.getColumnName(j + 1);
                 Object columnValue = sqlRowSet.getObject(columnName);
-                row[j] = transfer(columnName, columnValue);
+                row[j] = convert(columnName, columnValue);
             }
             row[columnCount] = System.getProperty("line.separator");
             Joiner joiner = Joiner.on(MyConstants.ESC).useForNull("");
             writer(joiner.join(row));
         }
-        outputStream.flush();
+
+        log.info("运行class[{}]结束，耗时[{}]秒", this.getClass().getName(), stopwatch.elapsed(TimeUnit.SECONDS));
         outputStream.close();
     }
 
@@ -65,9 +75,8 @@ public abstract class AbstractMigration implements IMigration<String> {
      * @author zhangzheng
      * @date 2021/1/3
      */
-    protected abstract Object transfer(String columnName, Object columnValue);
+    protected abstract Object convert(String columnName, Object columnValue);
 
-    @Override
     public void writer(String t) {
         try {
             IOUtils.write(t, outputStream, MyConstants.CHART_SET);
