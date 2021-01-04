@@ -39,18 +39,19 @@ public abstract class AbstractMigration {
     private final Logger log= LoggerFactory.getLogger(AbstractMigration.class);
 
     public void migration() throws IOException {
-        log.info("开始运行class[{}]", this.getClass().getName());
+        log.info("开始运行class[{}]", this.getClass().getSimpleName());
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         SqlRowSet sqlRowSet = MyUtils.getJdbcTemplate().queryForRowSet(getSql(sqlFileName));
+        SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
         for (int i = 0,k = 0; sqlRowSet.next(); i++) {
             if(i % MyConstants.FETCH_SIZE == 0){
                 k++;
                 outputStream.flush();
                 log.info("开始进行第[{}]个批次的迁移", k);
             }
-            SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
+
             Object[] row = new Object[columnCount + 1];
             for (int j = 0; j < columnCount; j++) {
                 String columnName = metaData.getColumnName(j + 1);
