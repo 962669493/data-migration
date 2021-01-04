@@ -2,16 +2,20 @@ package net.ask39.service;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
+import net.ask39.bean.Entry;
 import net.ask39.enums.MyConstants;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 
 import java.io.*;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,31 +40,40 @@ public abstract class AbstractMigration {
         this.outputStream = new FileOutputStream(outPutFileName);
     }
 
-    private final Logger log= LoggerFactory.getLogger(AbstractMigration.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractMigration.class);
 
     public void migration() throws IOException {
         log.info("开始运行class[{}]", this.getClass().getSimpleName());
+        before();
         Stopwatch stopwatch = Stopwatch.createStarted();
 
-        SqlRowSet sqlRowSet = MyUtils.getJdbcTemplate().queryForRowSet(getSql(sqlFileName));
+        SqlRowSet sqlRowSet = getJdbcTemplate().queryForRowSet(getSql(sqlFileName));
         SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
         int columnCount = metaData.getColumnCount();
-        for (int i = 0,k = 0; sqlRowSet.next(); i++) {
-            if(i % MyConstants.FETCH_SIZE == 0){
+        for (int i = 0, k = 0; sqlRowSet.next(); i++) {
+            if (i % MyConstants.FETCH_SIZE == 0) {
                 k++;
                 outputStream.flush();
                 log.info("开始进行第[{}]个批次的迁移", k);
             }
 
-            Object[] row = new Object[columnCount + 1];
+            Map<String, Object> row = new LinkedHashMap<>(columnCount);
             for (int j = 0; j < columnCount; j++) {
                 String columnName = metaData.getColumnName(j + 1);
                 Object columnValue = sqlRowSet.getObject(columnName);
-                row[j] = convert(columnName, columnValue);
+                if (columnValue instanceof Timestamp) {
+                    Timestamp timestamp = (Timestamp) columnValue;
+                    row.put(columnName, MyUtils.ldt2Str(timestamp.toLocalDateTime()));
+                } else {
+                    row.put(columnName, columnValue);
+                }
             }
-            row[columnCount] = System.getProperty("line.separator");
+            convert(row);
+            ArrayList<Object> values = new ArrayList<>(row.values());
+            values.add(System.getProperty("line.separator"));
+
             Joiner joiner = Joiner.on(MyConstants.ESC).useForNull("");
-            writer(joiner.join(row));
+            writer(joiner.join(values));
         }
 
         log.info("运行class[{}]结束，耗时[{}]秒", this.getClass().getName(), stopwatch.elapsed(TimeUnit.SECONDS));
@@ -70,13 +83,29 @@ public abstract class AbstractMigration {
     /**
      * 映射
      *
-     * @param columnName  列名
-     * @param columnValue 列值
+     * @param row 列名
      * @return 转换后的值
      * @author zhangzheng
      * @date 2021/1/3
      */
-    protected abstract Object convert(String columnName, Object columnValue);
+    protected abstract void convert(Map<String, Object> row);
+
+    /**
+     * JdbcTemplate
+     *
+     * @return JdbcTemplate
+     * @author zhangzheng
+     * @date 2021/1/3
+     */
+    protected abstract JdbcTemplate getJdbcTemplate();
+
+    /**
+     * 开始前的准备工作
+     *
+     * @author zhangzheng
+     * @date 2021/1/3
+     */
+    protected abstract void before();
 
     public void writer(String t) {
         try {
