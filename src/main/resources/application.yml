@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    askconfig:
+      jdbc-url: jdbc:sqlserver://219.238.238.120;databaseName=askconfig_20160505;integratedSecurity=false;
+      username: ask_120tPn
+      password: fegs345DF#wQcvW
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    askdata4:
+      jdbc-url: jdbc:sqlserver://219.238.238.120:1322;databaseName=askdata4_20160505;integratedSecurity=false;
+      username: ask_120tPn
+      password: fegs345DF#wQcvW
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    asklog:
+      jdbc-url: jdbc:sqlserver://219.238.238.120;databaseName=AskLogDB;integratedSecurity=false;
+      username: ask_120tPn
+      password: fegs345DF#wQcvW
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  data:
+    mongodb:
+      uri: mongodb://219.238.238.145:30000,219.238.238.145:30001,219.238.238.144:30000/authreply?readPreference=primary

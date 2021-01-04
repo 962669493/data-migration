@@ -29,4 +29,12 @@ public class JdbcTemplateConfig {
         jdbcTemplate.setFetchSize(MyConstants.FETCH_SIZE);
         return jdbcTemplate;
     }
+
+    @Bean(name = "asklogJdbcTemplate")
+    public JdbcTemplate asklogJdbcTemplate(
+            @Qualifier("asklogDataSource") DataSource dataSource) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.setFetchSize(MyConstants.FETCH_SIZE);
+        return jdbcTemplate;
+    }
 }

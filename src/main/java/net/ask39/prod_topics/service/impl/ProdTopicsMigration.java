@@ -25,7 +25,7 @@ public class ProdTopicsMigration extends AbstractMigration {
 
     private static final String SQL_FILE_NAME = "sql/prod_topics.sql";
 
-    private static final String OUT_PUT_FILE_NAME = "C:/Users/zhangzheng/Desktop/39/prod_topics.txt";
+    private static final String OUT_PUT_FILE_NAME = "data/prod_topics.txt";
 
     public ProdTopicsMigration() throws FileNotFoundException {
         super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);

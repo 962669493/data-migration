@@ -1,7 +1,6 @@
 package net.ask39;
 
-import net.ask39.prod_production_plan.service.impl.ProdProductionPlanMigration;
-import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
+import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,7 +25,10 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
     @Override
     public void run(String... args) throws Exception {
         //applicationContext.getBean(ProdTopicsMigration.class).migration();
-        applicationContext.getBean(ProdProductionPlanMigration.class).migration();
+        //applicationContext.getBean(ProdProductionPlanMigration.class).migration();
+        //applicationContext.getBean(ProdTopicsOperateLogMigration.class).migration();
+        applicationContext.getBean(ProdProductionStandardsMigration.class).migration();
+
     }
 
     @Override

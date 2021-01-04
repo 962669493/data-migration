@@ -1,4 +1,4 @@
-package net.ask39.prod_production_plan.service.impl;
+package net.ask39.prod_topics_operate_log.service.impl;
 
 import net.ask39.service.AbstractMigration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,18 +15,18 @@ import java.util.Map;
  * @date 2021-01-03
  **/
 @Service
-public class ProdProductionPlanMigration extends AbstractMigration {
+public class ProdTopicsOperateLogMigration extends AbstractMigration {
     @Resource(name = "askconfigJdbcTemplate")
     private JdbcTemplate askconfigJdbcTemplate;
 
-    @Resource(name = "askdata4JdbcTemplate")
-    private JdbcTemplate askdata4JdbcTemplate;
+    @Resource(name = "asklogJdbcTemplate")
+    private JdbcTemplate asklogJdbcTemplate;
 
-    private static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
+    private static final String SQL_FILE_NAME = "sql/prod_topics_operate_log.sql";
 
-    private static final String OUT_PUT_FILE_NAME = "data/prod_production_plan.txt";
+    private static final String OUT_PUT_FILE_NAME = "data/prod_topics_operate_log.txt";
 
-    public ProdProductionPlanMigration() throws FileNotFoundException {
+    public ProdTopicsOperateLogMigration() throws FileNotFoundException {
         super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
     }
 
@@ -42,6 +42,6 @@ public class ProdProductionPlanMigration extends AbstractMigration {
 
     @Override
     protected JdbcTemplate getJdbcTemplate() {
-        return askdata4JdbcTemplate;
+        return asklogJdbcTemplate;
     }
 }

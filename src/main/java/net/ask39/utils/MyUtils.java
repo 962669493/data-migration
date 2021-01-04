@@ -31,6 +31,9 @@ public class MyUtils {
     }
 
     public static LocalDateTime date2Ldt(Date date){
+        if(date == null){
+            return null;
+        }
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 

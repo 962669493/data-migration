@@ -27,4 +27,11 @@ public class DataSourceConfig {
     DataSource askdata4DataSource() {
         return DataSourceBuilder.create().build();
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.asklog")
+    @Qualifier("asklogDataSource")
+    DataSource asklogDataSource() {
+        return DataSourceBuilder.create().build();
+    }
 }

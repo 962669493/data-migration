@@ -2,7 +2,6 @@ package net.ask39.service;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
-import net.ask39.bean.Entry;
 import net.ask39.enums.MyConstants;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
