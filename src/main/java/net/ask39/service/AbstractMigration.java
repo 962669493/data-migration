@@ -2,6 +2,7 @@ package net.ask39.service;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
@@ -108,7 +109,7 @@ public abstract class AbstractMigration {
 
     public void writer(String t) {
         try {
-            IOUtils.write(t, outputStream, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(t), System.getProperty("line.separator"), outputStream, MyConstants.CHART_SET);
         } catch (IOException e) {
             throw new RuntimeException("写入数据出错");
         }

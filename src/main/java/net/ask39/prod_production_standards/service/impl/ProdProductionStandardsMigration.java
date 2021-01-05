@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.FileNotFoundException;
@@ -114,7 +115,6 @@ public class ProdProductionStandardsMigration {
     }
 
     private void convert(ProductionStandardsDoc productionStandards) throws IOException {
-        productionStandards = JsonUtils.string2Obj("{\"id\":\"5ef04e6d343a3e9ff5e7fb80\",\"standardsName\":\"ljw-测试标准-1\",\"demandPosition\":3,\"detailStandards\":{\"needDetail\":false},\"replyStandardsList\":[{\"answerStandards\":{\"lowWordCount\":0,\"highWordCount\":300,\"replyStandardsDetail\":\"回复标准-1\",\"titleDemo\":\"题目\",\"contentDemo\":\"内容      1.#######################      2.#######################\"},\"authStandards\":{\"needAuth\":true},\"answerScheme\":{\"keys\":[1,2],\"schemeContent\":[null,\"段落1\",\"段落2\"]}},{\"answerStandards\":{\"lowWordCount\":0,\"highWordCount\":150,\"replyStandardsDetail\":\"修改标准-2\",\"titleDemo\":\"题目\",\"contentDemo\":\"内容\"},\"authStandards\":{\"needAuth\":true}}],\"founderName\":\"root\",\"founderId\":1,\"createOn\":\"2020-06-22 14:27:39\"}", ProductionStandardsDoc.class);
         ProdProductionStandardsEntity dto = new ProdProductionStandardsEntity();
         dto.setId(productionStandardsId++);
         dto.setStandardsName(productionStandards.getStandardsName());
@@ -141,13 +141,21 @@ public class ProdProductionStandardsMigration {
             AnswerStandards answerStandards = replyStandards.getAnswerStandards();
             replyStandardsDTO.setLowWordCount(answerStandards.getLowWordCount());
             replyStandardsDTO.setHighWordCount(answerStandards.getHighWordCount());
-            replyStandardsDTO.setReplyStandardsDetail(answerStandards.getReplyStandardsDetail());
+            String replyStandardsDetail = answerStandards.getReplyStandardsDetail();
+            if(!StringUtils.isEmpty(replyStandardsDetail)) {
+                replyStandardsDTO.setReplyStandardsDetail(replyStandardsDetail.replaceAll("\n", MyConstants.SUB));
+            }
             replyStandardsDTO.setTitleDemo(answerStandards.getTitleDemo());
-            replyStandardsDTO.setContentDemo(answerStandards.getContentDemo());
+            String contentDemo = answerStandards.getContentDemo();
+            if(!StringUtils.isEmpty(contentDemo)){
+                replyStandardsDTO.setContentDemo(contentDemo.replaceAll("\n", MyConstants.SUB));
+            }
             AnswerScheme answerScheme = replyStandards.getAnswerScheme();
-            List<String> schemeContent = answerScheme.getSchemeContent();
-            if (!CollectionUtils.isEmpty(schemeContent)) {
-                replyStandardsDTO.setSchemeContent(Joiner.on(MyConstants.ESC).join(schemeContent.stream().filter(Objects::nonNull).collect(Collectors.toList())));
+            if(answerScheme != null){
+                List<String> schemeContent = answerScheme.getSchemeContent();
+                if (!CollectionUtils.isEmpty(schemeContent)) {
+                    replyStandardsDTO.setSchemeContent(Joiner.on(MyConstants.ESC).join(schemeContent.stream().filter(Objects::nonNull).collect(Collectors.toList())));
+                }
             }
             AuthStandards authStandards = replyStandards.getAuthStandards();
             replyStandardsDTO.setNeedAuth(authStandards.getNeedAuth() ? 1 : 0);
