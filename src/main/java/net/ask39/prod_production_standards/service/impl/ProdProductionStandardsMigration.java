@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @author zhangzheng
  * @date 2021-01-03
  **/
+@Lazy
 @Service
 public class ProdProductionStandardsMigration {
     @Resource(name = "askconfigJdbcTemplate")
@@ -39,14 +41,14 @@ public class ProdProductionStandardsMigration {
     @Autowired
     private ProductionStandardsDocRepository productionStandardsDocRepository;
 
-    private static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "data/prod_production_standards_id.txt";
+    public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "data/prod_production_standards_id.txt";
     private static final String STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_standards.txt";
     private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_reply_standards.txt";
     private static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "data/prod_production_reply_standard_map.txt";
-    private OutputStream standardsIdOutPutStream = new FileOutputStream(STANDARDS_ID_OUT_PUT_FILE_NAME);
-    private OutputStream standardsOutPutStream = new FileOutputStream(STANDARDS_OUT_PUT_FILE_NAME);
-    private OutputStream replyStandardsOutPutStream = new FileOutputStream(REPLY_STANDARDS_OUT_PUT_FILE_NAME);
-    private OutputStream standardMapOutPutStream = new FileOutputStream(REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME);
+    private final OutputStream standardsIdOutPutStream = new FileOutputStream(STANDARDS_ID_OUT_PUT_FILE_NAME);
+    private final OutputStream standardsOutPutStream = new FileOutputStream(STANDARDS_OUT_PUT_FILE_NAME);
+    private final OutputStream replyStandardsOutPutStream = new FileOutputStream(REPLY_STANDARDS_OUT_PUT_FILE_NAME);
+    private final OutputStream standardMapOutPutStream = new FileOutputStream(REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME);
 
     private long productionStandardsId = 1L;
     private long replyStandardsId = 1L;
@@ -60,7 +62,6 @@ public class ProdProductionStandardsMigration {
         List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
         all.sort(Comparator.comparing(ProductionStandardsDoc::getCreateOn));
         for (ProductionStandardsDoc productionStandardsDoc : all) {
-            log.info("{}", JsonUtils.obj2String(productionStandardsDoc));
             convert(productionStandardsDoc);
         }
         standardsIdOutPutStream.close();
@@ -87,7 +88,7 @@ public class ProdProductionStandardsMigration {
     }
     private void writerId(Long newId, String oldId) throws IOException {
         Joiner joiner = Joiner.on(MyConstants.ESC);
-        IOUtils.writeLines(Lists.newArrayList(joiner.join(Lists.newArrayList(newId, oldId))), System.getProperty("line.separator"), standardsIdOutPutStream, MyConstants.CHART_SET);
+        IOUtils.writeLines(Lists.newArrayList(joiner.join(Lists.newArrayList(oldId, newId))), System.getProperty("line.separator"), standardsIdOutPutStream, MyConstants.CHART_SET);
     }
     private void writerReplyStandardMap(Long productionStandardsId, Long replyStandardsId, int replyNo) throws IOException {
         Joiner joiner = Joiner.on(MyConstants.ESC);

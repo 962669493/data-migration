@@ -2,6 +2,7 @@ package net.ask39.prod_topics.service.impl;
 
 import net.ask39.prod_topics.entity.TopicExt;
 import net.ask39.service.AbstractMigration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.*;
  * @author zhangzheng
  * @date 2021-01-03
  **/
+@Lazy
 @Service
 public class ProdTopicsMigration extends AbstractMigration {
     @Resource(name = "askconfigJdbcTemplate")

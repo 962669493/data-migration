@@ -42,7 +42,7 @@ public abstract class AbstractMigration {
 
     private final Logger log = LoggerFactory.getLogger(AbstractMigration.class);
 
-    public void migration() throws IOException {
+    public void migration() throws Exception {
         log.info("开始运行class[{}]", this.getClass().getSimpleName());
         before();
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -69,11 +69,9 @@ public abstract class AbstractMigration {
                 }
             }
             convert(row);
-            ArrayList<Object> values = new ArrayList<>(row.values());
-            values.add(System.getProperty("line.separator"));
 
             Joiner joiner = Joiner.on(MyConstants.ESC).useForNull("");
-            writer(joiner.join(values));
+            writer(joiner.join(row.values()));
         }
 
         log.info("运行class[{}]结束，耗时[{}]秒", this.getClass().getName(), stopwatch.elapsed(TimeUnit.SECONDS));
@@ -105,7 +103,7 @@ public abstract class AbstractMigration {
      * @author zhangzheng
      * @date 2021/1/3
      */
-    protected abstract void before();
+    protected abstract void before() throws Exception;
 
     public void writer(String t) {
         try {
