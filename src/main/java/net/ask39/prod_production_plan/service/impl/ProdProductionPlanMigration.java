@@ -24,9 +24,6 @@ import java.util.Map;
 @Lazy
 @Service
 public class ProdProductionPlanMigration extends AbstractMigration {
-    @Resource(name = "askconfigJdbcTemplate")
-    private JdbcTemplate askconfigJdbcTemplate;
-
     @Resource(name = "askdata4JdbcTemplate")
     private JdbcTemplate askdata4JdbcTemplate;
 

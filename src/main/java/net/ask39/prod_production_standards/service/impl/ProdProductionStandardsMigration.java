@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 @Lazy
 @Service
 public class ProdProductionStandardsMigration {
-    @Resource(name = "askconfigJdbcTemplate")
-    private JdbcTemplate askconfigJdbcTemplate;
     @Resource(name = "asklogJdbcTemplate")
     private JdbcTemplate asklogJdbcTemplate;
     @Autowired

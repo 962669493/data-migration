@@ -1,4 +1,4 @@
-package net.ask39.prod_topics_operate_log.service.impl;
+package net.ask39.prod_topic_content_task.service.impl;
 
 import net.ask39.service.AbstractMigration;
 import org.springframework.context.annotation.Lazy;
@@ -10,22 +10,22 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 
 /**
- * 帖子表数据迁移
+ * 内容生产任务表数据迁移
  *
  * @author zhangzheng
- * @date 2021-01-03
+ * @date 2021-01-05
  **/
 @Lazy
 @Service
-public class ProdTopicsOperateLogMigration extends AbstractMigration {
-    @Resource(name = "asklogJdbcTemplate")
-    private JdbcTemplate asklogJdbcTemplate;
+public class ProdTopicContentTaskMigration extends AbstractMigration {
+    @Resource(name = "askconfigJdbcTemplate")
+    private JdbcTemplate askconfigJdbcTemplate;
 
-    private static final String SQL_FILE_NAME = "sql/prod_topics_operate_log.sql";
+    private static final String SQL_FILE_NAME = "sql/prod_topic_content_task.sql";
 
-    private static final String OUT_PUT_FILE_NAME = "data/prod_topics_operate_log.txt";
+    private static final String OUT_PUT_FILE_NAME = "data/prod_topic_content_task.txt";
 
-    public ProdTopicsOperateLogMigration() throws FileNotFoundException {
+    public ProdTopicContentTaskMigration() throws FileNotFoundException {
         super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
     }
 
@@ -41,6 +41,6 @@ public class ProdTopicsOperateLogMigration extends AbstractMigration {
 
     @Override
     protected JdbcTemplate getJdbcTemplate() {
-        return asklogJdbcTemplate;
+        return askconfigJdbcTemplate;
     }
 }

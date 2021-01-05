@@ -1,13 +1,19 @@
 package net.ask39.prod_topics.service.impl;
 
+import net.ask39.enums.MyConstants;
+import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import net.ask39.prod_topics.entity.TopicExt;
 import net.ask39.service.AbstractMigration;
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -33,34 +39,43 @@ public class ProdTopicsMigration extends AbstractMigration {
         super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
     }
 
-    Map<Integer, TopicExt> topicExtMap;
+    private Map<String, Integer> standardsIdMap;
+    private Map<Integer, TopicExt> topicExtMap;
 
     @Override
-    protected void before(){
-        List<TopicExt> topicExtList = askconfigJdbcTemplate.queryForList("select tid, sex, age from TopicExt", TopicExt.class);
-        this.topicExtMap = new HashMap<>(topicExtList.size());
-        for(TopicExt topicExt:topicExtList){
-            topicExtMap.put(topicExt.getTid(), topicExt);
+    protected void before() throws IOException {
+        standardsIdMap = new HashMap<>(256);
+        List<String> readLines = IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET);
+        for(String line:readLines){
+            String[] split = line.split(MyConstants.ESC);
+            standardsIdMap.put(split[0], Integer.valueOf(split[1]));
+        }
+
+        SqlRowSet sqlRowSet = askconfigJdbcTemplate.queryForRowSet("select tid, sex, age from TopicExt");
+        this.topicExtMap = new HashMap<>(1024);
+        while (sqlRowSet.next()){
+            int tid = sqlRowSet.getInt("tid");
+            int sex = sqlRowSet.getInt("sex");
+            String age = sqlRowSet.getString("age");
+            TopicExt topicExt = new TopicExt();
+            topicExt.setSex(sex);
+            topicExt.setAge(age);
+            topicExtMap.put(tid, topicExt);
         }
     }
 
     @Override
     protected void convert(Map<String, Object> row) {
+        row.put("title_hash", row.get("title").hashCode());
+
+        Object oldId = row.get("production_standards_id");
+        row.put("production_standards_id", standardsIdMap.get(oldId));
+
         Object tid = row.get("tid");
         TopicExt topicExt = topicExtMap.get(tid);
-
-        for(Map.Entry<String, Object> entry : row.entrySet()){
-            String columnName = entry.getKey();
-            Object columnValue = entry.getValue();
-            if(Objects.equals(columnName, "sex") && topicExt != null){
-                row.put(columnName, topicExt.getSex());
-            }
-            if(Objects.equals(columnName, "age") && topicExt != null){
-                row.put(columnName, topicExt.getAge());
-            }
-            if(Objects.equals(columnName, "title_hash")){
-                row.put(columnName, row.get("title").hashCode());
-            }
+        if(topicExt != null){
+            row.put("sex", topicExt.getSex());
+            row.put("age", topicExt.getAge());
         }
     }
 
