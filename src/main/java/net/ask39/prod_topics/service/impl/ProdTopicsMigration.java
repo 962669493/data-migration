@@ -24,12 +24,17 @@ import java.util.*;
 @Service
 public class ProdTopicsMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topics.sql";
-    private static final String OUT_PUT_FILE_NAME = "output/prod_topics.txt";
     private static final OutputStream OUTPUT_STREAM;
+    private static final OutputStream PROD_REPLY_ORDER_OUTPUT_STREAM;
+    private static final OutputStream PROD_AUTH_ORDER_OUTPUT_STREAM;
+    private static final OutputStream TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM;
 
     static {
         try {
-            OUTPUT_STREAM = new FileOutputStream(OUT_PUT_FILE_NAME);
+            OUTPUT_STREAM = new FileOutputStream("output/prod_topics.txt");
+            PROD_REPLY_ORDER_OUTPUT_STREAM = new FileOutputStream("output/prod_reply_order.txt");
+            PROD_AUTH_ORDER_OUTPUT_STREAM = new FileOutputStream("output/prod_auth_order.txt");
+            TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM = new FileOutputStream("output/topic_id-reply_task_id-auth_task_id.txt");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -39,15 +44,25 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
         super(OUTPUT_STREAM);
     }
 
-    private Map<String, Integer> standardsIdMap;
+    @Override
+    public void after() throws Exception {
+        OUTPUT_STREAM.close();
+        PROD_REPLY_ORDER_OUTPUT_STREAM.close();
+        PROD_AUTH_ORDER_OUTPUT_STREAM.close();
+        TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM.close();
+    }
+
+    private Map<String, String> standardsIdMap;
     private Map<Integer, TopicExt> topicExtMap;
+    private Map<String, List<String>> newStandardsIdAndReplyNos;
+    private Map<String, String> replyStandardsIdAndNeedAuth;
 
     @Override
     public void before() throws IOException {
-        standardsIdMap = new HashMap<>(256);
+        standardsIdMap = new HashMap<>(64);
         for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
             String[] split = line.split(MyConstants.ESC);
-            standardsIdMap.put(split[0], Integer.valueOf(split[1]));
+            standardsIdMap.put(split[0], split[1]);
         }
 
         topicExtMap = new HashMap<>(2048);
@@ -59,24 +74,41 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
             topicExtMap.put(Integer.valueOf(values[0]), topicExt);
         }
 
-        topicIdAndReplyTaskIdAndAuthTaskIdOutputStream = new FileOutputStream(topicIdAndReplyTaskIdAndAuthTaskIdOutputFilePath);
+        newStandardsIdAndReplyNos = new HashMap<>(64);
+        for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
+            String[] values = line.split(MyConstants.ESC);
+            String prodStandardsId = values[0];
+            List<String> replyNos = newStandardsIdAndReplyNos.get(prodStandardsId);
+            if (replyNos == null) {
+                replyNos = new ArrayList<>(3);
+            }
+            replyNos.add(values[1]);
+            newStandardsIdAndReplyNos.put(prodStandardsId, replyNos);
+        }
+
+        replyStandardsIdAndNeedAuth = new HashMap<>(64);
+        for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
+            String[] values = line.split(MyConstants.ESC);
+            replyStandardsIdAndNeedAuth.put(values[0], values[8]);
+        }
+
     }
 
     @Override
-    public String[] convert(String line) throws Exception {
+    public String[] convert(String line) {
         return line.split(MyConstants.HT);
     }
 
-    private OutputStream topicIdAndReplyTaskIdAndAuthTaskIdOutputStream;
-    public static String topicIdAndReplyTaskIdAndAuthTaskIdOutputFilePath = "output/topic_id-reply_task_id-auth_task_id.txt";
-
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(Lists.newArrayList(topicId, replyTaskId, authTaskId))), System.getProperty("line.separator"), topicIdAndReplyTaskIdAndAuthTaskIdOutputStream, MyConstants.CHART_SET);
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(Lists.newArrayList(topicId, replyTaskId, authTaskId))), System.getProperty("line.separator"), TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM, MyConstants.CHART_SET);
     }
 
     @Override
     public String[] process(String[] strings) throws Exception {
         String topicId = strings[0];
+        // production_standards_id
+        String newStandardsId = standardsIdMap.get(strings[8]);
+        strings[8] = newStandardsId;
         TopicExt topicExt = topicExtMap.get(topicId);
         // sex
         strings[13] = String.valueOf(topicExt.getSex());
@@ -84,14 +116,66 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
         strings[14] = topicExt.getAge();
         // title_hash
         strings[18] = String.valueOf(strings[11].hashCode());
+
         // taskId
         Map<String, Integer> taskIds = JsonUtils.string2Obj(strings[21], Map.class);
-        writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId,
-                taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue())),
-                taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue())));
+        Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
+        Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
+        writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
+        writerProdReplyOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, replyTaskId, strings[16]);
+        writerProdAuthOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, authTaskId, strings[16]);
         List<String> result = Arrays.asList(strings);
         result.remove(21);
         return result.toArray(new String[0]);
+    }
+
+    private void writerProdAuthOrder(List<String> replyNos, String topicId, Integer taskId, String topicCreateTime) throws IOException {
+        for (int i = 1; i <= replyNos.size(); i++) {
+            String replyStandardsId = replyNos.get(i - 1);
+            String needAuth = replyStandardsIdAndNeedAuth.get(replyStandardsId);
+            if(!Objects.equals(needAuth, "1")){
+                continue;
+            }
+            List<Object> data = new ArrayList<>();
+            data.add(topicId);
+            // TODO 更新授权工单的任务配置ID
+            data.add(null);
+            data.add(taskId);
+            // TODO 更新授权工单的指派授权人ID
+            data.add(null);
+            // TODO 更新授权工单的回复ID
+            data.add(null);
+            // TODO 更新授权工单的回复人ID
+            data.add(null);
+            data.add(i);
+            data.add(replyStandardsId);
+            data.add(3);
+            // TODO 更新授权工单的回复积分
+            data.add(null);
+            data.add(topicCreateTime);
+            data.add(topicCreateTime);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(data)), System.getProperty("line.separator"), PROD_AUTH_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
+        }
+    }
+
+    private void writerProdReplyOrder(List<String> replyNos, String topicId, Integer taskId, String topicCreateTime) throws IOException {
+        for (int i = 1; i <= replyNos.size(); i++) {
+            List<Object> data = new ArrayList<>();
+            data.add(topicId);
+            // TODO 更新答题工单的任务配置ID
+            data.add(null);
+            data.add(i);
+            // TODO 更新答题工单的回复积分
+            data.add(null);
+            data.add(taskId);
+            // TODO 更新答题工单的指派回复人ID
+            data.add(null);
+            data.add(replyNos.get(i-1));
+            data.add(3);
+            data.add(topicCreateTime);
+            data.add(topicCreateTime);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(data)), System.getProperty("line.separator"), PROD_REPLY_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
+        }
     }
 
     class TopicExt {

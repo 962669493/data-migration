@@ -12,18 +12,9 @@ SELECT
 	null score,
 	null inner_copy_check_result,
 	t2.sameRatio outer_copy_ratio,
-	case
-		t2.reauditState when 1 then 2
-		when 2 then 1
-		when 3 then 0
-		when 4 then 2
-		else t2.reauditState
-	end audit_status,
+	null audit_status,
 	null is_manual_audit,
-	case
-		when t2.reauditState = 4 then 10
-		else 0
-	end quality,
+	null quality,
 	t1.IsDoctor replier_type,
 	case
 		when t2.isRejected > 0 then 1
@@ -39,8 +30,8 @@ SELECT
 	t1.MemberId replier_id,
 	t1.NickName replier_name,
 	t1.MemberId update_user,
-	t1.CreateOn create_on,
-	t1.CreateOn update_time
+	CONVERT(varchar(100), t1.CreateOn, 20 ) create_on,
+	CONVERT(varchar(100), t1.CreateOn, 20 ) update_time
 FROM
 	IssuePost t1
 left join ReplyAuditResult t2 on

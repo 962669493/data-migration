@@ -22,4 +22,4 @@ spring:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   data:
     mongodb:
-      uri: mongodb://219.238.238.145:30000,219.238.238.145:30001,219.238.238.144:30000/authreply?readPreference=primary
+      uri: mongodb://219.238.238.81:27018,219.238.238.40:27018,219.238.238.81:27021/authreply?readPreference=primary

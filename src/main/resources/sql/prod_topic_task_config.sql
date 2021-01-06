@@ -7,11 +7,11 @@ SELECT
 	Specified is_assigned,
 	MemberId assigned_id,
 	DoctorTag doctor_tag,
-	Score,
+	Score score,
 	ReplyNo reply_no,
-	CreateOn create_on,
+	CONVERT(varchar(100), CreateOn, 20 ) create_on,
 	CreateName create_name,
-	UpdateTime update_time,
+	CONVERT(varchar(100), UpdateTime, 20 ) update_time,
 	0 is_deleted
 FROM
 	TopicTaskConfig;

@@ -4,12 +4,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.entity.*;
+import net.ask39.prod_production_standards.service.ProductionStandardsDocRepository;
 import net.ask39.service.BaseMigration;
 import net.ask39.utils.JsonUtils;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -33,7 +35,7 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
     public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "output/prod_production_standards_id.txt";
     private static final String STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_standards.txt";
     private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_reply_standards.txt";
-    private static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "output/prod_production_reply_standard_map.txt";
+    public static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "output/prod_production_reply_standard_map.txt";
     private final OutputStream standardsIdOutPutStream = new FileOutputStream(STANDARDS_ID_OUT_PUT_FILE_NAME);
     private final OutputStream standardsOutPutStream = new FileOutputStream(STANDARDS_OUT_PUT_FILE_NAME);
     private final OutputStream replyStandardsOutPutStream = new FileOutputStream(REPLY_STANDARDS_OUT_PUT_FILE_NAME);
@@ -48,6 +50,9 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
         super(null);
     }
 
+    @Autowired
+    private ProductionStandardsDocRepository productionStandardsDocRepository;
+
     private void writerProdProductionStandardsEntity(ProdProductionStandardsEntity standardsEntity) throws IOException {
         List<Object> data = new ArrayList<>();
         data.add(standardsEntity.getId());
@@ -57,8 +62,8 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
         data.add(standardsEntity.getNeedDetail());
         data.add(standardsEntity.getFounderName());
         data.add(standardsEntity.getFounderId());
-        data.add(standardsEntity.getCreateOn());
-        data.add(standardsEntity.getUpdateTime());
+        data.add(MyUtils.ldt2Str(standardsEntity.getCreateOn()));
+        data.add(MyUtils.ldt2Str(standardsEntity.getUpdateTime()));
         data.add(standardsEntity.getUpdateUser());
         data.add(standardsEntity.getIsDeleted());
         Joiner joiner = Joiner.on(MyConstants.ESC).useForNull("");
@@ -83,9 +88,9 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
         data.add(replyStandardsEntity.getContentDemo());
         data.add(replyStandardsEntity.getSchemeContent());
         data.add(replyStandardsEntity.getNeedAuth());
-        data.add(replyStandardsEntity.getCreateOn());
+        data.add(MyUtils.ldt2Str(replyStandardsEntity.getCreateOn()));
         data.add(replyStandardsEntity.getCreateName());
-        data.add(replyStandardsEntity.getUpdateTime());
+        data.add(MyUtils.ldt2Str(replyStandardsEntity.getUpdateTime()));
         data.add(replyStandardsEntity.getUpdateName());
         data.add(replyStandardsEntity.getIsDeleted());
 
@@ -96,6 +101,16 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
     @Override
     public ProductionStandardsDoc convert(String line) {
         return JsonUtils.string2Obj(line, ProductionStandardsDoc.class);
+    }
+
+    @Override
+    public void reader(File file) throws Exception {
+        before();
+        List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
+        for(ProductionStandardsDoc productionStandardsDoc : all){
+            process(productionStandardsDoc);
+        }
+        after();
     }
 
     @Override

@@ -11,9 +11,9 @@ SELECT
 	authorizeSchedule authorize_schedule,
 	funderId funder_id,
 	funderName funder_name,
-	createOn create_on,
+	CONVERT(varchar(100), createOn, 20 ) create_on,
 	productionStandardsId production_standards_id,
-	updateTime update_time,
+	CONVERT(varchar(100), updateTime, 20 ) update_time,
 	0 is_deleted
 	-- taskId,
 	-- uploadTaskId,

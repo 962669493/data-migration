@@ -33,13 +33,13 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
     @Override
     public void run(String... args) throws Exception {
         String inputFilePath = System.getProperty("inputFilePath");
-        applicationContext.getBean(ProdProductionStandardsMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdProductionStandardsMigration.class).reader(new File(inputFilePath));
         applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdReplyMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdReplyMigration.class).reader(new File(inputFilePath));
 
     }
 
