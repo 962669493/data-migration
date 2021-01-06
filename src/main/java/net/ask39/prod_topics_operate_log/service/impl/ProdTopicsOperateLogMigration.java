@@ -1,13 +1,13 @@
 package net.ask39.prod_topics_operate_log.service.impl;
 
-import net.ask39.service.AbstractMigration;
+import net.ask39.enums.MyConstants;
+import net.ask39.service.BaseMigration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.FileNotFoundException;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * 帖子表数据迁移
@@ -17,30 +17,29 @@ import java.util.Map;
  **/
 @Lazy
 @Service
-public class ProdTopicsOperateLogMigration extends AbstractMigration {
-    @Resource(name = "asklogJdbcTemplate")
-    private JdbcTemplate asklogJdbcTemplate;
-
+public class ProdTopicsOperateLogMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topics_operate_log.sql";
-
     private static final String OUT_PUT_FILE_NAME = "data/prod_topics_operate_log.txt";
+    private static final OutputStream OUTPUT_STREAM;
+    static {
+        try {
+            OUTPUT_STREAM = new FileOutputStream(OUT_PUT_FILE_NAME);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public ProdTopicsOperateLogMigration() throws FileNotFoundException {
-        super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
+    public ProdTopicsOperateLogMigration() {
+        super(OUTPUT_STREAM);
     }
 
     @Override
-    protected void before(){
-
+    public String[] convert(String line) throws Exception {
+        return line.split(MyConstants.HT);
     }
 
     @Override
-    protected void convert(Map<String, Object> row) {
+    public void process(String[] strings) throws Exception {
 
-    }
-
-    @Override
-    protected JdbcTemplate getJdbcTemplate() {
-        return asklogJdbcTemplate;
     }
 }

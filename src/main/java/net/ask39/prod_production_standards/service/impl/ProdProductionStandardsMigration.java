@@ -4,25 +4,21 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.entity.*;
-import net.ask39.prod_production_standards.service.ProductionStandardsDocRepository;
+import net.ask39.service.BaseMigration;
 import net.ask39.utils.JsonUtils;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,12 +29,7 @@ import java.util.stream.Collectors;
  **/
 @Lazy
 @Service
-public class ProdProductionStandardsMigration {
-    @Resource(name = "asklogJdbcTemplate")
-    private JdbcTemplate asklogJdbcTemplate;
-    @Autowired
-    private ProductionStandardsDocRepository productionStandardsDocRepository;
-
+public class ProdProductionStandardsMigration extends BaseMigration<ProductionStandardsDoc> {
     public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "data/prod_production_standards_id.txt";
     private static final String STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_standards.txt";
     private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_reply_standards.txt";
@@ -54,18 +45,7 @@ public class ProdProductionStandardsMigration {
     private final Logger log = LoggerFactory.getLogger(ProdProductionStandardsMigration.class);
 
     public ProdProductionStandardsMigration() throws FileNotFoundException {
-    }
-
-    public void migration() throws IOException {
-        List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
-        all.sort(Comparator.comparing(ProductionStandardsDoc::getCreateOn));
-        for (ProductionStandardsDoc productionStandardsDoc : all) {
-            convert(productionStandardsDoc);
-        }
-        standardsIdOutPutStream.close();
-        standardsOutPutStream.close();
-        replyStandardsOutPutStream.close();
-        standardMapOutPutStream.close();
+        super(null);
     }
 
     private void writerProdProductionStandardsEntity(ProdProductionStandardsEntity standardsEntity) throws IOException {
@@ -113,23 +93,29 @@ public class ProdProductionStandardsMigration {
         IOUtils.writeLines(Lists.newArrayList(joiner.join(Lists.newArrayList(data))), System.getProperty("line.separator"), replyStandardsOutPutStream, MyConstants.CHART_SET);
     }
 
-    private void convert(ProductionStandardsDoc productionStandards) throws IOException {
+    @Override
+    public ProductionStandardsDoc convert(String line) {
+        return JsonUtils.string2Obj(line, ProductionStandardsDoc.class);
+    }
+
+    @Override
+    public void process(ProductionStandardsDoc productionStandardsDoc) throws IOException {
         ProdProductionStandardsEntity dto = new ProdProductionStandardsEntity();
         dto.setId(productionStandardsId++);
-        dto.setStandardsName(productionStandards.getStandardsName());
-        dto.setDemandPosition(productionStandards.getDemandPosition());
-        DetailStandards detailStandards = productionStandards.getDetailStandards();
+        dto.setStandardsName(productionStandardsDoc.getStandardsName());
+        dto.setDemandPosition(productionStandardsDoc.getDemandPosition());
+        DetailStandards detailStandards = productionStandardsDoc.getDetailStandards();
         dto.setNeedDetail(detailStandards.getNeedDetail() ? 1 : 0);
-        dto.setFounderName(productionStandards.getFounderName());
-        dto.setFounderId(Long.valueOf(productionStandards.getFounderId()));
-        dto.setCreateOn(MyUtils.date2Ldt(productionStandards.getCreateOn()));
-        List<ReplyStandards> replyStandardsList = productionStandards.getReplyStandardsList();
+        dto.setFounderName(productionStandardsDoc.getFounderName());
+        dto.setFounderId(Long.valueOf(productionStandardsDoc.getFounderId()));
+        dto.setCreateOn(MyUtils.date2Ldt(productionStandardsDoc.getCreateOn()));
+        List<ReplyStandards> replyStandardsList = productionStandardsDoc.getReplyStandardsList();
         dto.setReplyCount(replyStandardsList.size());
         dto.setUpdateTime(dto.getCreateOn());
         dto.setUpdateUser(dto.getFounderId());
         dto.setIsDeleted(0);
 
-        writerId(dto.getId(), productionStandards.getId());
+        writerId(dto.getId(), productionStandardsDoc.getId());
         writerProdProductionStandardsEntity(dto);
 
         int replyNo = 1;
@@ -167,5 +153,18 @@ public class ProdProductionStandardsMigration {
             writerReplyStandardMap(dto.getId(), replyStandardsDTO.getId(), replyNo++);
             writerReplyStandard(replyStandardsDTO);
         }
+    }
+
+    @Override
+    public void writer(ProductionStandardsDoc productionStandardsDoc) {
+
+    }
+
+    @Override
+    public void after() throws Exception {
+        standardsIdOutPutStream.close();
+        standardsOutPutStream.close();
+        replyStandardsOutPutStream.close();
+        standardMapOutPutStream.close();
     }
 }

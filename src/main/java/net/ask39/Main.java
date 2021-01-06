@@ -34,7 +34,7 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
         //applicationContext.getBean(ProdProductionPlanMigration.class).migration();
         //applicationContext.getBean(ProdTopicContentTaskMigration.class).migration();
         //applicationContext.getBean(ProdTopicTaskConfigMigration.class).migration();
-        applicationContext.getBean(ProdTopicsMigration.class).migration();
+        //applicationContext.getBean(ProdTopicsMigration.class).migration();
         //applicationContext.getBean(ProdTopicsOperateLogMigration.class).migration();
         //applicationContext.getBean(ProdReplyMigration.class).migration();
 

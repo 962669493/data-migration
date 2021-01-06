@@ -2,18 +2,12 @@ package net.ask39.prod_topics.service.impl;
 
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
-import net.ask39.prod_topics.entity.TopicExt;
-import net.ask39.service.AbstractMigration;
+import net.ask39.service.BaseMigration;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -24,63 +18,77 @@ import java.util.*;
  **/
 @Lazy
 @Service
-public class ProdTopicsMigration extends AbstractMigration {
-    @Resource(name = "askconfigJdbcTemplate")
-    private JdbcTemplate askconfigJdbcTemplate;
-
-    @Resource(name = "askdata4JdbcTemplate")
-    private JdbcTemplate askdata4JdbcTemplate;
-
+public class ProdTopicsMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topics.sql";
-
     private static final String OUT_PUT_FILE_NAME = "data/prod_topics.txt";
+    private static final OutputStream OUTPUT_STREAM;
+    static {
+        try {
+            OUTPUT_STREAM = new FileOutputStream(OUT_PUT_FILE_NAME);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public ProdTopicsMigration() throws FileNotFoundException {
-        super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
+    public ProdTopicsMigration() {
+        super(OUTPUT_STREAM);
     }
 
     private Map<String, Integer> standardsIdMap;
     private Map<Integer, TopicExt> topicExtMap;
 
     @Override
-    protected void before() throws IOException {
+    public void before() throws IOException {
         standardsIdMap = new HashMap<>(256);
-        List<String> readLines = IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET);
-        for(String line:readLines){
+        for(String line:IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)){
             String[] split = line.split(MyConstants.ESC);
             standardsIdMap.put(split[0], Integer.valueOf(split[1]));
         }
 
-        SqlRowSet sqlRowSet = askconfigJdbcTemplate.queryForRowSet("select tid, sex, age from TopicExt");
-        this.topicExtMap = new HashMap<>(1024);
-        while (sqlRowSet.next()){
-            int tid = sqlRowSet.getInt("tid");
-            int sex = sqlRowSet.getInt("sex");
-            String age = sqlRowSet.getString("age");
+        topicExtMap = new HashMap<>(2048);
+        for(String line:IOUtils.readLines(new FileInputStream("data/TopicExt.txt"), MyConstants.CHART_SET)){
+            String[] values = line.split(MyConstants.ESC);
             TopicExt topicExt = new TopicExt();
-            topicExt.setSex(sex);
-            topicExt.setAge(age);
-            topicExtMap.put(tid, topicExt);
+            topicExt.setSex(Integer.valueOf(values[1]));
+            topicExt.setAge(values[2]);
+            topicExtMap.put(Integer.valueOf(values[0]), topicExt);
         }
     }
 
     @Override
-    protected void convert(Map<String, Object> row) {
-        row.put("title_hash", row.get("title").hashCode());
-
-        Object oldId = row.get("production_standards_id");
-        row.put("production_standards_id", standardsIdMap.get(oldId));
-
-        Object tid = row.get("tid");
-        TopicExt topicExt = topicExtMap.get(tid);
-        if(topicExt != null){
-            row.put("sex", topicExt.getSex());
-            row.put("age", topicExt.getAge());
-        }
+    public String[] convert(String line) throws Exception {
+        return line.split(MyConstants.HT);
     }
 
     @Override
-    protected JdbcTemplate getJdbcTemplate() {
-        return askdata4JdbcTemplate;
+    public void process(String[] strings) throws Exception {
+        TopicExt topicExt = topicExtMap.get(strings[0]);
+        // sex
+        strings[13] = String.valueOf(topicExt.getSex());
+        // age
+        strings[14] = topicExt.getAge();
+        // title_hash
+        strings[18] = String.valueOf(strings[11].hashCode());
+    }
+
+    class TopicExt{
+        private Integer sex;
+        private String age;
+
+        public Integer getSex() {
+            return sex;
+        }
+
+        public void setSex(Integer sex) {
+            this.sex = sex;
+        }
+
+        public String getAge() {
+            return age;
+        }
+
+        public void setAge(String age) {
+            this.age = age;
+        }
     }
 }

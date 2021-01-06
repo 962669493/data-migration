@@ -2,15 +2,15 @@ package net.ask39.prod_production_plan.service.impl;
 
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
-import net.ask39.service.AbstractMigration;
+import net.ask39.service.BaseMigration;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +23,26 @@ import java.util.Map;
  **/
 @Lazy
 @Service
-public class ProdProductionPlanMigration extends AbstractMigration {
-    @Resource(name = "askdata4JdbcTemplate")
-    private JdbcTemplate askdata4JdbcTemplate;
-
+public class ProdProductionPlanMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
-
     private static final String OUT_PUT_FILE_NAME = "data/prod_production_plan.txt";
+    private static final OutputStream OUTPUT_STREAM;
+    static {
+        try {
+            OUTPUT_STREAM = new FileOutputStream(OUT_PUT_FILE_NAME);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public ProdProductionPlanMigration() throws FileNotFoundException {
-        super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
+    public ProdProductionPlanMigration() {
+        super(OUTPUT_STREAM);
     }
 
     private Map<String, Integer> standardsIdMap;
 
     @Override
-    protected void before() throws Exception {
+    public void before() throws Exception {
         standardsIdMap = new HashMap<>(256);
         List<String> readLines = IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET);
         for(String line:readLines){
@@ -48,13 +52,13 @@ public class ProdProductionPlanMigration extends AbstractMigration {
     }
 
     @Override
-    protected void convert(Map<String, Object> row) {
-        Object oldId = row.get("production_standards_id");
-        row.put("production_standards_id", standardsIdMap.get(oldId));
+    public String[] convert(String line) {
+        return line.split(MyConstants.HT);
     }
 
     @Override
-    protected JdbcTemplate getJdbcTemplate() {
-        return askdata4JdbcTemplate;
+    public void process(String[] strings) {
+        // production_standards_id
+        strings[12] = String.valueOf(standardsIdMap.get(strings[12]));
     }
 }

@@ -1,13 +1,13 @@
 package net.ask39.prod_topic_content_task.service.impl;
 
-import net.ask39.service.AbstractMigration;
+import net.ask39.enums.MyConstants;
+import net.ask39.service.BaseMigration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.FileNotFoundException;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * 内容生产任务表数据迁移
@@ -17,30 +17,29 @@ import java.util.Map;
  **/
 @Lazy
 @Service
-public class ProdTopicContentTaskMigration extends AbstractMigration {
-    @Resource(name = "askconfigJdbcTemplate")
-    private JdbcTemplate askconfigJdbcTemplate;
-
+public class ProdTopicContentTaskMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topic_content_task.sql";
-
     private static final String OUT_PUT_FILE_NAME = "data/prod_topic_content_task.txt";
+    private static final OutputStream OUTPUT_STREAM;
+    static {
+        try {
+            OUTPUT_STREAM = new FileOutputStream(OUT_PUT_FILE_NAME);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public ProdTopicContentTaskMigration() throws FileNotFoundException {
-        super(SQL_FILE_NAME, OUT_PUT_FILE_NAME);
+    public ProdTopicContentTaskMigration() {
+        super(OUTPUT_STREAM);
     }
 
     @Override
-    protected void before(){
-
+    public String[] convert(String line) {
+        return line.split(MyConstants.HT);
     }
 
     @Override
-    protected void convert(Map<String, Object> row) {
+    public void process(String[] strings) {
 
-    }
-
-    @Override
-    protected JdbcTemplate getJdbcTemplate() {
-        return askconfigJdbcTemplate;
     }
 }
