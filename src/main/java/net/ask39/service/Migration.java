@@ -9,7 +9,7 @@ public interface Migration<T> {
     void before() throws Exception;
     void reader(File file) throws Exception;
     T convert(String line) throws Exception;
-    void process(T t) throws Exception;
+    T process(T t) throws Exception;
     void writer(T t) throws Exception;
     void after() throws Exception;
 }

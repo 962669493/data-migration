@@ -19,7 +19,7 @@ import java.io.OutputStream;
 @Service
 public class ProdTopicsOperateLogMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topics_operate_log.sql";
-    private static final String OUT_PUT_FILE_NAME = "data/prod_topics_operate_log.txt";
+    private static final String OUT_PUT_FILE_NAME = "output/prod_topics_operate_log.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {
@@ -39,7 +39,7 @@ public class ProdTopicsOperateLogMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public void process(String[] strings) throws Exception {
-
+    public String[] process(String[] strings) throws Exception {
+        return strings;
     }
 }

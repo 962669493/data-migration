@@ -25,7 +25,7 @@ import java.util.Map;
 @Service
 public class ProdProductionPlanMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
-    private static final String OUT_PUT_FILE_NAME = "data/prod_production_plan.txt";
+    private static final String OUT_PUT_FILE_NAME = "output/prod_production_plan.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {
@@ -57,8 +57,9 @@ public class ProdProductionPlanMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public void process(String[] strings) {
+    public String[] process(String[] strings) {
         // production_standards_id
         strings[12] = String.valueOf(standardsIdMap.get(strings[12]));
+        return strings;
     }
 }

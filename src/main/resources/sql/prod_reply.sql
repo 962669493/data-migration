@@ -1,6 +1,6 @@
 SELECT
 	t1.ReplyID id,
-	null reply_id,
+	t1.ReplyID reply_id,
 	t1.tid topic_id,
 	t1.ForumID forum_id,
 	null sources,

@@ -33,8 +33,7 @@ public abstract class BaseMigration<T> implements Migration<T> {
         try(LineIterator it = FileUtils.lineIterator(file, MyConstants.CHART_SET.toString())) {
             while (it.hasNext()) {
                 T line = convert(it.nextLine());
-                process(line);
-                writer(line);
+                writer(process(line));
             }
         }
         after();

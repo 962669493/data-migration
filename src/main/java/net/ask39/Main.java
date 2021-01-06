@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.io.File;
+
 /**
  * 应用入口
  *
@@ -30,13 +32,14 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
 
     @Override
     public void run(String... args) throws Exception {
-        //applicationContext.getBean(ProdProductionStandardsMigration.class).migration();
-        //applicationContext.getBean(ProdProductionPlanMigration.class).migration();
-        //applicationContext.getBean(ProdTopicContentTaskMigration.class).migration();
-        //applicationContext.getBean(ProdTopicTaskConfigMigration.class).migration();
-        //applicationContext.getBean(ProdTopicsMigration.class).migration();
-        //applicationContext.getBean(ProdTopicsOperateLogMigration.class).migration();
-        //applicationContext.getBean(ProdReplyMigration.class).migration();
+        String inputFilePath = System.getProperty("inputFilePath");
+        applicationContext.getBean(ProdProductionStandardsMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdReplyMigration.class).reader(new File(inputFilePath));
 
     }
 

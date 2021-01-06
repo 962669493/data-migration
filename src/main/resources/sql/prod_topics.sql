@@ -19,10 +19,10 @@ SELECT
 	t1.updateTime update_time,
 	'' title_hash,
 	0 is_deleted,
-	t1.feedbackStateId feedback_count
+	t1.feedbackStateId feedback_count,
 	-- t1.zaotieStatus zaotie_status,
 	-- t1.commitStatus commit_status,
-	-- t1.taskId task_id
+	t1.taskId
 FROM
 	AuthTopics t1
 	left join ProductionPlan t2

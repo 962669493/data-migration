@@ -30,10 +30,10 @@ import java.util.stream.Collectors;
 @Lazy
 @Service
 public class ProdProductionStandardsMigration extends BaseMigration<ProductionStandardsDoc> {
-    public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "data/prod_production_standards_id.txt";
-    private static final String STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_standards.txt";
-    private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "data/prod_production_reply_standards.txt";
-    private static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "data/prod_production_reply_standard_map.txt";
+    public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "output/prod_production_standards_id.txt";
+    private static final String STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_standards.txt";
+    private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_reply_standards.txt";
+    private static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "output/prod_production_reply_standard_map.txt";
     private final OutputStream standardsIdOutPutStream = new FileOutputStream(STANDARDS_ID_OUT_PUT_FILE_NAME);
     private final OutputStream standardsOutPutStream = new FileOutputStream(STANDARDS_OUT_PUT_FILE_NAME);
     private final OutputStream replyStandardsOutPutStream = new FileOutputStream(REPLY_STANDARDS_OUT_PUT_FILE_NAME);
@@ -99,7 +99,7 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
     }
 
     @Override
-    public void process(ProductionStandardsDoc productionStandardsDoc) throws IOException {
+    public ProductionStandardsDoc process(ProductionStandardsDoc productionStandardsDoc) throws IOException {
         ProdProductionStandardsEntity dto = new ProdProductionStandardsEntity();
         dto.setId(productionStandardsId++);
         dto.setStandardsName(productionStandardsDoc.getStandardsName());
@@ -153,6 +153,7 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
             writerReplyStandardMap(dto.getId(), replyStandardsDTO.getId(), replyNo++);
             writerReplyStandard(replyStandardsDTO);
         }
+        return productionStandardsDoc;
     }
 
     @Override

@@ -19,7 +19,7 @@ import java.io.OutputStream;
 @Service
 public class ProdReplyMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_reply.sql";
-    private static final String OUT_PUT_FILE_NAME = "data/prod_reply.txt";
+    private static final String OUT_PUT_FILE_NAME = "output/prod_reply.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {
@@ -39,7 +39,7 @@ public class ProdReplyMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public void process(String[] strings) {
-
+    public String[] process(String[] strings) {
+        return strings;
     }
 }

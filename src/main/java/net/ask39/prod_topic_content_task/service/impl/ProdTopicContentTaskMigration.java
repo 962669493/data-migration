@@ -19,7 +19,7 @@ import java.io.OutputStream;
 @Service
 public class ProdTopicContentTaskMigration extends BaseMigration<String[]> {
     private static final String SQL_FILE_NAME = "sql/prod_topic_content_task.sql";
-    private static final String OUT_PUT_FILE_NAME = "data/prod_topic_content_task.txt";
+    private static final String OUT_PUT_FILE_NAME = "output/prod_topic_content_task.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {
@@ -39,7 +39,7 @@ public class ProdTopicContentTaskMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public void process(String[] strings) {
-
+    public String[] process(String[] strings) {
+        return strings;
     }
 }
