@@ -178,6 +178,11 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
         }
     }
 
+    @Override
+    public void writer(String[] strings) throws IOException {
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
+    }
+
     class TopicExt {
         private Integer sex;
         private String age;

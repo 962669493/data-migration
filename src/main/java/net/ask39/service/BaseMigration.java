@@ -9,6 +9,8 @@ import org.apache.commons.io.LineIterator;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author zhangzheng
@@ -37,11 +39,6 @@ public abstract class BaseMigration<T> implements Migration<T> {
             }
         }
         after();
-    }
-
-    @Override
-    public void writer(T t) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(t), System.getProperty("line.separator"), outputStream, MyConstants.CHART_SET);
     }
 
     @Override

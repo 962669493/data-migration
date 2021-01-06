@@ -1,5 +1,7 @@
 package net.ask39.prod_production_plan.service.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import net.ask39.service.BaseMigration;
@@ -7,10 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,13 @@ public class ProdProductionPlanMigration extends BaseMigration<String[]> {
     }
 
     @Override
+    public void writer(String[] strings) throws IOException {
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
+    }
+
+    @Override
     public String[] convert(String line) {
-        return line.split(MyConstants.HT);
+        return line.split("\\|");
     }
 
     @Override

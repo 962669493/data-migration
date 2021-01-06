@@ -1,12 +1,16 @@
 package net.ask39.prod_reply.service.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.service.BaseMigration;
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -36,6 +40,11 @@ public class ProdReplyMigration extends BaseMigration<String[]> {
     @Override
     public String[] convert(String line) {
         return line.split(MyConstants.HT);
+    }
+
+    @Override
+    public void writer(String[] strings) throws IOException {
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
     }
 
     @Override

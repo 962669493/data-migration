@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.entity.*;
 import net.ask39.prod_production_standards.service.ProductionStandardsDocRepository;
-import net.ask39.service.BaseMigration;
+import net.ask39.service.Migration;
 import net.ask39.utils.JsonUtils;
 import net.ask39.utils.MyUtils;
 import org.apache.commons.io.IOUtils;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  **/
 @Lazy
 @Service
-public class ProdProductionStandardsMigration extends BaseMigration<ProductionStandardsDoc> {
+public class ProdProductionStandardsMigration implements Migration<ProductionStandardsDoc> {
     public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "output/prod_production_standards_id.txt";
     private static final String STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_standards.txt";
     private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_reply_standards.txt";
@@ -47,7 +47,6 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
     private final Logger log = LoggerFactory.getLogger(ProdProductionStandardsMigration.class);
 
     public ProdProductionStandardsMigration() throws FileNotFoundException {
-        super(null);
     }
 
     @Autowired
@@ -101,6 +100,11 @@ public class ProdProductionStandardsMigration extends BaseMigration<ProductionSt
     @Override
     public ProductionStandardsDoc convert(String line) {
         return JsonUtils.string2Obj(line, ProductionStandardsDoc.class);
+    }
+
+    @Override
+    public void before() {
+
     }
 
     @Override
