@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 帖子表数据迁移
@@ -22,7 +24,7 @@ import java.io.OutputStream;
  **/
 @Lazy
 @Service
-public class ProdReplyAuditOrderMigration extends BaseMigration<String[]> {
+public class ProdReplyAuditOrderMigration extends BaseMigration<List<String>> {
     private static final String SQL_FILE_NAME = "sql/prod_reply_audit_order.sql";
     private static final String OUT_PUT_FILE_NAME = "output/prod_reply_audit_order.txt";
     private static final OutputStream OUTPUT_STREAM;
@@ -39,42 +41,37 @@ public class ProdReplyAuditOrderMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public String[] convert(String line) {
-        return line.split(MyConstants.HT);
+    public List<String> convert(String line) {
+        return Arrays.asList(line.split(MyConstants.HT));
     }
 
     @Override
-    public void writer(String[] strings) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
-    }
-
-    @Override
-    public String[] process(String[] strings) {
-        String auditStatus = strings[8];
+    public List<String> process(List<String> values) {
+        String auditStatus = values.get(8);
         ReplyAuditStatusEnum replyAuditStatusEnum = ReplyAuditStatusEnum.getByValue(Integer.parseInt(auditStatus));
         switch (replyAuditStatusEnum){
             case Pass:
-                strings[8] = "8";
+                values.set(8, "8");
                 break;
             case Low:
-                strings[8] = "3";
+                values.set(8, "3");
                 break;
             case Wait:
-                strings[8] = "2";
+                values.set(8, "2");
                 break;
             case High:
-                strings[8] = "8";
-                strings[14] = "10";
+                values.set(8, "8");
+                values.set(14, "10");
                 break;
             case Unqualified:
-                strings[8] = "4";
+                values.set(8, "4");
                 break;
             case NullValue:
-                strings[8] = "2";
+                values.set(8, "2");
                 break;
             default:
                 break;
         }
-        return strings;
+        return values;
     }
 }

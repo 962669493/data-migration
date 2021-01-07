@@ -36,3 +36,5 @@ FROM
 	IssuePost t1
 left join ReplyAuditResult t2 on
 	t1.ReplyID = t2.replyId
+inner join AuthTopics t3 on
+    t1.tid = t3.tid

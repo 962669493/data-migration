@@ -3,7 +3,7 @@ SELECT
 	termNum term_num,
 	demandPosition demand_position,
 	topicsNum topics_num,
-	'' prod_success,
+	1 prod_success,
 	doneTime done_time,
 	-- zaotieSchedule,
 	answerSchedule reply_schedule,

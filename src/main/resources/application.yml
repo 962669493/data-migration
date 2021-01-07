@@ -20,6 +20,11 @@ spring:
       username: ask_120tPn
       password: fegs345DF#wQcvW
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    produce:
+      username: root
+      password: 123456
+      jdbc-url: jdbc:mysql://192.168.204.129:3306/pd_produce_dev_db?serverTimezone=Asia/Shanghai
+      driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
       uri: mongodb://219.238.238.81:27018,219.238.238.40:27018,219.238.238.81:27021/authreply?readPreference=primary

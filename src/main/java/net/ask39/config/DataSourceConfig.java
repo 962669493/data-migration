@@ -39,4 +39,11 @@ public class DataSourceConfig {
     DataSource askcenterDataSource() {
         return DataSourceBuilder.create().build();
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.produce")
+    @Qualifier("produceDataSource")
+    DataSource produceDataSource() {
+        return DataSourceBuilder.create().build();
+    }
 }

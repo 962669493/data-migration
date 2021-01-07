@@ -5,14 +5,16 @@ import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import net.ask39.service.BaseMigration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 帖子表数据迁移
@@ -22,9 +24,9 @@ import java.util.Map;
  **/
 @Lazy
 @Service
-public class ProdProductionPlanMigration extends BaseMigration<String[]> {
+public class ProdProductionPlanMigration extends BaseMigration<List<String>> {
     private static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
-    private static final String OUT_PUT_FILE_NAME = "output/prod_production_plan.txt";
+    public static final String OUT_PUT_FILE_NAME = "output/prod_production_plan.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {
@@ -51,19 +53,31 @@ public class ProdProductionPlanMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public void writer(String[] strings) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
+    public List<String> convert(String line) {
+        return Arrays.asList(line.split("\\|", -1));
     }
 
     @Override
-    public String[] convert(String line) {
-        return line.split("\\|");
-    }
-
-    @Override
-    public String[] process(String[] strings) {
+    public List<String> process(List<String> values) {
         // production_standards_id
-        strings[12] = String.valueOf(standardsIdMap.get(strings[12]));
-        return strings;
+        Integer production_standards_id = standardsIdMap.get(values.get(12));
+        if(production_standards_id != null){
+            values.set(12, String.valueOf(production_standards_id));
+        }else{
+            values.set(12, "");
+        }
+        return values;
+    }
+
+    @Resource(name = "produceJdbcTemplate")
+    private JdbcTemplate produceJdbcTemplate;
+
+    public void insert() throws Exception{
+        try(LineIterator it = FileUtils.lineIterator(new File(OUT_PUT_FILE_NAME), MyConstants.CHART_SET.toString())) {
+            while (it.hasNext()) {
+                String values = it.nextLine().replaceAll(MyConstants.ESC, ",");
+                produceJdbcTemplate.update("insert into prod_production_plan values (" + values +")");
+            }
+        }
     }
 }

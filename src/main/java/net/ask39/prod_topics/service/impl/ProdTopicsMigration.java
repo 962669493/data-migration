@@ -22,7 +22,7 @@ import java.util.*;
  **/
 @Lazy
 @Service
-public class ProdTopicsMigration extends BaseMigration<String[]> {
+public class ProdTopicsMigration extends BaseMigration<List<String>> {
     private static final String SQL_FILE_NAME = "sql/prod_topics.sql";
     private static final OutputStream OUTPUT_STREAM;
     private static final OutputStream PROD_REPLY_ORDER_OUTPUT_STREAM;
@@ -95,8 +95,8 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public String[] convert(String line) {
-        return line.split(MyConstants.HT);
+    public List<String> convert(String line) {
+        return Arrays.asList(line.split(MyConstants.HT));
     }
 
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
@@ -104,29 +104,29 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public String[] process(String[] strings) throws Exception {
-        String topicId = strings[0];
+    public List<String> process(List<String> values) throws Exception {
+        String topicId = values.get(0);
         // production_standards_id
-        String newStandardsId = standardsIdMap.get(strings[8]);
-        strings[8] = newStandardsId;
+        String newStandardsId = standardsIdMap.get(values.get(8));
+        values.set(8, newStandardsId);
         TopicExt topicExt = topicExtMap.get(topicId);
         // sex
-        strings[13] = String.valueOf(topicExt.getSex());
+        values.set(13, String.valueOf(topicExt.getSex()));
         // age
-        strings[14] = topicExt.getAge();
+        values.set(14, String.valueOf(topicExt.getAge()));
         // title_hash
-        strings[18] = String.valueOf(strings[11].hashCode());
+        values.set(18, String.valueOf(values.get(11).hashCode()));
 
         // taskId
-        Map<String, Integer> taskIds = JsonUtils.string2Obj(strings[21], Map.class);
+        Map<String, Integer> taskIds = JsonUtils.string2Obj(values.get(21), Map.class);
         Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
         Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
         writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
-        writerProdReplyOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, replyTaskId, strings[16]);
-        writerProdAuthOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, authTaskId, strings[16]);
-        List<String> result = Arrays.asList(strings);
-        result.remove(21);
-        return result.toArray(new String[0]);
+        String createTime = values.get(16);
+        writerProdReplyOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, replyTaskId, createTime);
+        writerProdAuthOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, authTaskId, createTime);
+        values.remove(21);
+        return values;
     }
 
     private void writerProdAuthOrder(List<String> replyNos, String topicId, Integer taskId, String topicCreateTime) throws IOException {
@@ -176,11 +176,6 @@ public class ProdTopicsMigration extends BaseMigration<String[]> {
             data.add(topicCreateTime);
             IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(data)), System.getProperty("line.separator"), PROD_REPLY_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
         }
-    }
-
-    @Override
-    public void writer(String[] strings) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
     }
 
     class TopicExt {

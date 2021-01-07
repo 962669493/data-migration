@@ -1,5 +1,6 @@
 package net.ask39;
 
+import net.ask39.prod_production_plan.service.impl.ProdProductionPlanInsert;
 import net.ask39.prod_production_plan.service.impl.ProdProductionPlanMigration;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import net.ask39.prod_reply.service.impl.ProdReplyMigration;
@@ -34,7 +35,10 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
     public void run(String... args) throws Exception {
         String inputFilePath = System.getProperty("inputFilePath");
         //applicationContext.getBean(ProdProductionStandardsMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File(inputFilePath));
+        applicationContext.getBean(ProdProductionPlanInsert.class).insert();
+
         //applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));

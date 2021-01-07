@@ -45,4 +45,12 @@ public class JdbcTemplateConfig {
         jdbcTemplate.setFetchSize(MyConstants.FETCH_SIZE);
         return jdbcTemplate;
     }
+
+    @Bean(name = "produceJdbcTemplate")
+    public JdbcTemplate produceJdbcTemplate(
+            @Qualifier("produceDataSource") DataSource dataSource) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.setFetchSize(MyConstants.FETCH_SIZE);
+        return jdbcTemplate;
+    }
 }

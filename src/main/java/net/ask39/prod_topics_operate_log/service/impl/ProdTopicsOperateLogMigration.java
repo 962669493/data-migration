@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 帖子表数据迁移
@@ -21,7 +23,7 @@ import java.io.OutputStream;
  **/
 @Lazy
 @Service
-public class ProdTopicsOperateLogMigration extends BaseMigration<String[]> {
+public class ProdTopicsOperateLogMigration extends BaseMigration<List<String>> {
     private static final String SQL_FILE_NAME = "sql/prod_topics_operate_log.sql";
     private static final String OUT_PUT_FILE_NAME = "output/prod_topics_operate_log.txt";
     private static final OutputStream OUTPUT_STREAM;
@@ -38,17 +40,12 @@ public class ProdTopicsOperateLogMigration extends BaseMigration<String[]> {
     }
 
     @Override
-    public String[] convert(String line) throws Exception {
-        return line.split(MyConstants.HT);
+    public List<String> convert(String line) throws Exception {
+        return Arrays.asList(line.split(MyConstants.HT));
     }
 
     @Override
-    public void writer(String[] strings) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(strings)), System.getProperty("line.separator"), OUTPUT_STREAM, MyConstants.CHART_SET);
-    }
-
-    @Override
-    public String[] process(String[] strings) throws Exception {
-        return strings;
+    public List<String> process(List<String> values) throws Exception {
+        return values;
     }
 }

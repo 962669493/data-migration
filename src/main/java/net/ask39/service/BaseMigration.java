@@ -1,5 +1,6 @@
 package net.ask39.service;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import org.apache.commons.io.FileUtils;
@@ -7,16 +8,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author zhangzheng
  * @date 2021-01-06
  **/
-public abstract class BaseMigration<T> implements Migration<T> {
+public abstract class BaseMigration<T extends List<String>> implements Migration<T> {
 
     private final OutputStream outputStream;
 
@@ -39,6 +39,11 @@ public abstract class BaseMigration<T> implements Migration<T> {
             }
         }
         after();
+    }
+
+    @Override
+    public void writer(T t) throws Exception {
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("").join(t)), System.getProperty("line.separator"), outputStream, MyConstants.CHART_SET);
     }
 
     @Override
