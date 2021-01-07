@@ -19,9 +19,15 @@ import java.util.Objects;
 public abstract class BaseMigration<T extends List<String>> implements Migration<T> {
 
     private final OutputStream outputStream;
+    private String charsetName = MyConstants.CHART_SET.toString();
 
     public BaseMigration(OutputStream outputStream) {
         this.outputStream = outputStream;
+    }
+
+    public BaseMigration(OutputStream outputStream, String charsetName) {
+        this.outputStream = outputStream;
+        this.charsetName = charsetName;
     }
 
     @Override
@@ -32,7 +38,7 @@ public abstract class BaseMigration<T extends List<String>> implements Migration
     @Override
     public void reader(File file) throws Exception{
         before();
-        try(LineIterator it = FileUtils.lineIterator(file, MyConstants.CHART_SET.toString())) {
+        try(LineIterator it = FileUtils.lineIterator(file, charsetName)) {
             while (it.hasNext()) {
                 T line = convert(it.nextLine());
                 writer(process(line));

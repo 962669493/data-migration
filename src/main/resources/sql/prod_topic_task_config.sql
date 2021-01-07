@@ -14,4 +14,4 @@ SELECT
 	CONVERT(varchar(100), UpdateTime, 20 ) update_time,
 	0 is_deleted
 FROM
-	TopicTaskConfig;
+	TopicTaskConfig

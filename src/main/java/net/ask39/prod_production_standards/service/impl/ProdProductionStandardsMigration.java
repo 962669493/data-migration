@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 @Service
 public class ProdProductionStandardsMigration implements Migration<ProductionStandardsDoc> {
     public static final String STANDARDS_ID_OUT_PUT_FILE_NAME = "output/prod_production_standards_id.txt";
-    private static final String STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_standards.txt";
-    private static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_reply_standards.txt";
+    public static final String STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_standards.txt";
+    public static final String REPLY_STANDARDS_OUT_PUT_FILE_NAME = "output/prod_production_reply_standards.txt";
     public static final String REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME = "output/prod_production_reply_standard_map.txt";
     private final OutputStream standardsIdOutPutStream = new FileOutputStream(STANDARDS_ID_OUT_PUT_FILE_NAME);
     private final OutputStream standardsOutPutStream = new FileOutputStream(STANDARDS_OUT_PUT_FILE_NAME);
@@ -57,11 +57,11 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
         data.add(standardsEntity.getId());
         data.add(standardsEntity.getStandardsName());
         data.add(standardsEntity.getDemandPosition());
-        data.add(standardsEntity.getDemandPosition());
         data.add(standardsEntity.getNeedDetail());
         data.add(standardsEntity.getFounderName());
         data.add(standardsEntity.getFounderId());
         data.add(MyUtils.ldt2Str(standardsEntity.getCreateOn()));
+        data.add(standardsEntity.getReplyCount());
         data.add(MyUtils.ldt2Str(standardsEntity.getUpdateTime()));
         data.add(standardsEntity.getUpdateUser());
         data.add(standardsEntity.getIsDeleted());
@@ -85,6 +85,7 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
         data.add(replyStandardsEntity.getReplyStandardsDetail());
         data.add(replyStandardsEntity.getTitleDemo());
         data.add(replyStandardsEntity.getContentDemo());
+        data.add(replyStandardsEntity.getSection());
         data.add(replyStandardsEntity.getSchemeContent());
         data.add(replyStandardsEntity.getNeedAuth());
         data.add(MyUtils.ldt2Str(replyStandardsEntity.getCreateOn()));
@@ -158,7 +159,7 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
             if(answerScheme != null){
                 List<String> schemeContent = answerScheme.getSchemeContent();
                 if (!CollectionUtils.isEmpty(schemeContent)) {
-                    replyStandardsDTO.setSchemeContent(Joiner.on(MyConstants.ESC).join(schemeContent.stream().filter(Objects::nonNull).collect(Collectors.toList())));
+                    replyStandardsDTO.setSchemeContent(Joiner.on(MyConstants.HT).join(schemeContent.stream().filter(Objects::nonNull).collect(Collectors.toList())));
                 }
             }
             AuthStandards authStandards = replyStandards.getAuthStandards();

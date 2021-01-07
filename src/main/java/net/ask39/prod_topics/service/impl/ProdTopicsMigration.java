@@ -8,8 +8,11 @@ import net.ask39.prod_topics.enums.TopicContentTaskTypeEnum;
 import net.ask39.service.BaseMigration;
 import net.ask39.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.util.*;
@@ -41,7 +44,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     }
 
     public ProdTopicsMigration() {
-        super(OUTPUT_STREAM);
+        super(OUTPUT_STREAM, "GBK");
     }
 
     @Override
@@ -66,7 +69,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         }
 
         topicExtMap = new HashMap<>(2048);
-        for (String line : IOUtils.readLines(new FileInputStream("output/TopicExt.txt"), MyConstants.CHART_SET)) {
+        for (String line : IOUtils.readLines(new FileInputStream("input/TopicExt.txt"), MyConstants.CHART_SET)) {
             String[] values = line.split(MyConstants.ESC);
             TopicExt topicExt = new TopicExt();
             topicExt.setSex(Integer.valueOf(values[1]));
@@ -87,12 +90,14 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         }
 
         replyStandardsIdAndNeedAuth = new HashMap<>(64);
-        for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARD_MAP_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
+        for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARDS_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
             String[] values = line.split(MyConstants.ESC);
             replyStandardsIdAndNeedAuth.put(values[0], values[8]);
         }
 
     }
+
+    private final Logger log = LoggerFactory.getLogger(ProdTopicsMigration.class);
 
     @Override
     public List<String> convert(String line) {
@@ -100,32 +105,42 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     }
 
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(Lists.newArrayList(topicId, replyTaskId, authTaskId))), System.getProperty("line.separator"), TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM, MyConstants.CHART_SET);
+        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(Lists.newArrayList(topicId, replyTaskId, authTaskId))), System.getProperty("line.separator"), TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM, MyConstants.CHART_SET);
     }
 
     @Override
     public List<String> process(List<String> values) throws Exception {
         String topicId = values.get(0);
         // production_standards_id
-        String newStandardsId = standardsIdMap.get(values.get(8));
+        String newStandardsId = standardsIdMap.get(values.get(12));
         values.set(8, newStandardsId);
         TopicExt topicExt = topicExtMap.get(topicId);
-        // sex
-        values.set(13, String.valueOf(topicExt.getSex()));
-        // age
-        values.set(14, String.valueOf(topicExt.getAge()));
+        if(topicExt != null){
+            // sex
+            values.set(13, String.valueOf(topicExt.getSex()));
+            // age
+            values.set(14, String.valueOf(topicExt.getAge()));
+        }
         // title_hash
         values.set(18, String.valueOf(values.get(11).hashCode()));
-
-        // taskId
-        Map<String, Integer> taskIds = JsonUtils.string2Obj(values.get(21), Map.class);
-        Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
-        Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
-        writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
-        String createTime = values.get(16);
-        writerProdReplyOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, replyTaskId, createTime);
-        writerProdAuthOrder(newStandardsIdAndReplyNos.get(newStandardsId), topicId, authTaskId, createTime);
-        values.remove(21);
+        if(values.size() >= 25){
+            // taskId
+            Map<String, Integer> taskIds = JsonUtils.string2Obj(values.get(25), Map.class);
+            Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
+            Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
+            writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
+            String createTime = values.get(20);
+            if(!StringUtils.isEmpty(newStandardsId)){
+                List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
+                writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
+                writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
+            }else {
+                log.warn("帖子没有对应的生产标准：[{}]", values);
+            }
+            values.set(25, null);
+        }else{
+            log.warn("帖子没有对应的任务：[{}]", values);
+        }
         return values;
     }
 
@@ -154,7 +169,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             data.add(null);
             data.add(topicCreateTime);
             data.add(topicCreateTime);
-            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(data)), System.getProperty("line.separator"), PROD_AUTH_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("").join(data)), System.getProperty("line.separator"), PROD_AUTH_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
         }
     }
 
@@ -174,7 +189,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             data.add(3);
             data.add(topicCreateTime);
             data.add(topicCreateTime);
-            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.HT).join(data)), System.getProperty("line.separator"), PROD_REPLY_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("").join(data)), System.getProperty("line.separator"), PROD_REPLY_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
         }
     }
 

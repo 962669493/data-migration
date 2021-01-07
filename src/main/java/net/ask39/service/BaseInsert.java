@@ -21,7 +21,12 @@ public abstract class BaseInsert {
         lineIterator = FileUtils.lineIterator(new File(fileName), MyConstants.CHART_SET.toString());
     }
 
+    protected BaseInsert(String fileName, String charsetName) throws IOException {
+        lineIterator = FileUtils.lineIterator(new File(fileName), charsetName);
+    }
+
     public void insert() throws Exception {
+        before();
         while (true) {
             String row = getRow();
             if (row != null) {
@@ -36,6 +41,9 @@ public abstract class BaseInsert {
     }
 
     protected abstract void insert(String[] values);
+    protected void before() throws Exception{
+
+    }
 
     public String getRow() {
         if (lineIterator.hasNext()) {
@@ -45,9 +53,12 @@ public abstract class BaseInsert {
     }
 
     public String[] convert(String row) {
-        String[] values = row.split(MyConstants.ESC);
+        String[] values = row.split(MyConstants.HT);
         for (int i = 0; i < values.length; i++) {
             if (Objects.equals(values[i], "")) {
+                values[i] = null;
+            }
+            if (Objects.equals(values[i], "NULL")) {
                 values[i] = null;
             }
         }

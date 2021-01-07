@@ -2,7 +2,11 @@ SELECT
 	t1.id,
 	t1.tid,
 	t1.pageForum page_forum,
+	null page_forum_tree_code,
+	null page_forum_name,
 	t1.assignForum assign_forum,
+	null assign_forum_tree_code,
+	null assign_forum_name,
     t1.replyStatus reply_status,
 	t1.auditStatus audit_status,
 	t1.authStatus auth_status,
@@ -25,5 +29,5 @@ SELECT
 	t1.taskId
 FROM
 	AuthTopics t1
-	left join ProductionPlan t2
-	on t1.planId = t2.id
+left join ProductionPlan t2
+on t1.planId = t2.id

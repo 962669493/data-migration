@@ -4,7 +4,7 @@ SELECT
 	demandPosition demand_position,
 	topicsNum topics_num,
 	1 prod_success,
-	doneTime done_time,
+	CONVERT(varchar(100), doneTime, 20 ) done_time,
 	-- zaotieSchedule,
 	answerSchedule reply_schedule,
 	auditSchedule audit_schedule,

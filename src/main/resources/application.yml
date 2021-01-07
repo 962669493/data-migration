@@ -28,3 +28,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://219.238.238.81:27018,219.238.238.40:27018,219.238.238.81:27021/authreply?readPreference=primary
+
+logging:
+  level:
+    root: info

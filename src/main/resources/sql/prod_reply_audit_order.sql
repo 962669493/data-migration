@@ -14,8 +14,9 @@ SELECT
 	reauditUserid auditor_id,
 	reauditUserName auditor_name,
 	null quality,
-	CONVERT(varchar(100), t1.updateTime, 20 ) update_time,
-	CONVERT(varchar(100), t1.createOn, 20 ) create_time,
+	CONVERT(varchar(100), updateTime, 20 ) update_time,
+	CONVERT(varchar(100), createOn, 20 ) create_time,
 	0 is_batch
 FROM
 	ReplyAuditResult
+where businessSource = 2

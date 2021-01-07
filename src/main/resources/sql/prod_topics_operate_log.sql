@@ -11,3 +11,4 @@ SELECT
 	-- reauditLowType
 FROM
 	AuthTopicsHandleLog
+where createOn >='2020-01-01 00:00:00'
