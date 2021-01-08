@@ -92,7 +92,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         replyStandardsIdAndNeedAuth = new HashMap<>(64);
         for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARDS_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
             String[] values = line.split(MyConstants.ESC);
-            replyStandardsIdAndNeedAuth.put(values[0], values[8]);
+            replyStandardsIdAndNeedAuth.put(values[0], values[9]);
         }
 
     }
@@ -101,7 +101,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
 
     @Override
     public List<String> convert(String line) {
-        return Arrays.asList(line.split(MyConstants.HT));
+        return new ArrayList<>(Arrays.asList(line.split(MyConstants.HT, -1)));
     }
 
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
@@ -111,9 +111,10 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     @Override
     public List<String> process(List<String> values) throws Exception {
         String topicId = values.get(0);
-        // production_standards_id
-        String newStandardsId = standardsIdMap.get(values.get(12));
-        values.set(8, newStandardsId);
+        String plan_id = values.get(11);
+        String production_standards_id = values.get(12);
+        String newStandardsId = standardsIdMap.get(production_standards_id);
+        values.set(12, newStandardsId);
         TopicExt topicExt = topicExtMap.get(topicId);
         if(topicExt != null){
             // sex
@@ -122,10 +123,11 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             values.set(14, String.valueOf(topicExt.getAge()));
         }
         // title_hash
-        values.set(18, String.valueOf(values.get(11).hashCode()));
-        if(values.size() >= 25){
-            // taskId
-            Map<String, Integer> taskIds = JsonUtils.string2Obj(values.get(25), Map.class);
+        values.set(22, String.valueOf(values.get(15).hashCode()));
+        // taskId
+        String taskIdsStr = values.get(25);
+        if(!StringUtils.isEmpty(taskIdsStr)){
+            Map<String, Integer> taskIds = JsonUtils.string2Obj(taskIdsStr, Map.class);
             Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
             Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
             writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
@@ -134,13 +136,18 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
                 List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
                 writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
                 writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
-            }else {
-                log.warn("帖子没有对应的生产标准：[{}]", values);
             }
-            values.set(25, null);
+            if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
+                log.warn("帖子没有对应的生产计划：[{}]生产标准：[{}]", plan_id, newStandardsId);
+            }else if(StringUtils.isEmpty(plan_id)){
+                log.warn("帖子没有对应的生产计划：[{}]", plan_id);
+            }else if(StringUtils.isEmpty(newStandardsId)){
+                log.warn("帖子没有对应的生产标准：[{}]", newStandardsId);
+            }
         }else{
-            log.warn("帖子没有对应的任务：[{}]", values);
+            //log.warn("帖子没有对应的任务：[{}]", values);
         }
+        values.remove(25);
         return values;
     }
 

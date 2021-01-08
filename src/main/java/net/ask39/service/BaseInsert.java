@@ -1,14 +1,19 @@
 package net.ask39.service;
 
+import com.google.common.base.Stopwatch;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_plan.service.impl.ProdProductionPlanMigration;
+import net.ask39.prod_topics.service.impl.ProdTopicsInsert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangzheng
@@ -25,11 +30,16 @@ public abstract class BaseInsert {
         lineIterator = FileUtils.lineIterator(new File(fileName), charsetName);
     }
 
+    private final Logger log = LoggerFactory.getLogger(BaseInsert.class);
+
     public void insert() throws Exception {
+        Stopwatch watch = Stopwatch.createStarted();
+        int i = 0;
         before();
         while (true) {
             String row = getRow();
             if (row != null) {
+                i++;
                 String[] values = convert(row);
                 insert(values);
             } else {
@@ -37,7 +47,7 @@ public abstract class BaseInsert {
                 break;
             }
         }
-
+        log.info("[{}]insert完成，共[{}]行，耗时[{}]秒", this.getClass().getSimpleName(), i, watch.elapsed(TimeUnit.SECONDS));
     }
 
     protected abstract void insert(String[] values);
@@ -53,7 +63,7 @@ public abstract class BaseInsert {
     }
 
     public String[] convert(String row) {
-        String[] values = row.split(MyConstants.HT);
+        String[] values = row.split(MyConstants.HT, -1);
         for (int i = 0; i < values.length; i++) {
             if (Objects.equals(values[i], "")) {
                 values[i] = null;

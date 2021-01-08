@@ -3,6 +3,7 @@ package net.ask39;
 import net.ask39.prod_production_plan.service.impl.ProdProductionPlanInsert;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsInsert;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
+import net.ask39.prod_topics.service.impl.ProdTopicsInsert;
 import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.CommandLineRunner;
@@ -38,12 +39,13 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
         //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdReplyMigration.class).reader(new File(inputFilePath));
-        applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
 
         //applicationContext.getBean(ProdProductionPlanInsert.class).insert();
         //applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();
         //applicationContext.getBean(ProdProductionReplyStandardMapInsert.class).insert();
         //applicationContext.getBean(ProdProductionStandardsInsert.class).insert();
+        applicationContext.getBean(ProdTopicsInsert.class).insert();
     }
 
     @Override
