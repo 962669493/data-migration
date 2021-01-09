@@ -24,7 +24,7 @@ import java.util.List;
 @Lazy
 @Service
 public class ProdReplyMigration extends BaseMigration<List<String>> {
-    private static final String SQL_FILE_NAME = "sql/prod_reply.sql";
+    public static final String SQL_FILE_NAME = "sql/prod_reply.sql";
     private static final String OUT_PUT_FILE_NAME = "output/prod_reply.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {

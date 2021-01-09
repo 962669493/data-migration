@@ -1,14 +1,19 @@
 spring:
   datasource:
     askconfig:
-      jdbc-url: jdbc:sqlserver://219.238.238.120;databaseName=askconfig_20160505;integratedSecurity=false;
-      username: ask_120tPn
-      password: fegs345DF#wQcvW
+      jdbc-url: jdbc:sqlserver://10.10.10.88;databaseName=askconfig;integratedSecurity=false;
+      username: ask_lepqIEQ88
+      password: tz_1FzgPRSTzUmpl
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askdata4:
       jdbc-url: jdbc:sqlserver://219.238.238.120:1322;databaseName=askdata4_20160505;integratedSecurity=false;
       username: ask_120tPn
       password: fegs345DF#wQcvW
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    askdata5:
+      jdbc-url: jdbc:sqlserver://121.201.76.175;databaseName=askdata5;integratedSecurity=false;
+      username: bil893nsoi
+      password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     asklog:
       jdbc-url: jdbc:sqlserver://219.238.238.120;databaseName=AskLogDB;integratedSecurity=false;

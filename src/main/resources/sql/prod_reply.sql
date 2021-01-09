@@ -6,7 +6,7 @@ SELECT
 	null sources,
 	t1.IP ip,
 	null order_id,
-	null reply_no,
+	t1.VoteNum reply_no,
 	null reply_standard_id,
 	t1.MainBody reply_content,
 	null score,
@@ -32,4 +32,4 @@ SELECT
 	0 is_delete
 FROM
 	IssuePost t1
-where t1.IsHaiLiang in (1, 11)
+where t1.IsTopic != 1 and t1.VoteNum != 0

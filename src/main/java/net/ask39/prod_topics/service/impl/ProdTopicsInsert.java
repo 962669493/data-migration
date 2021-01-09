@@ -22,7 +22,7 @@ import java.util.*;
 @Service
 public class ProdTopicsInsert extends BaseInsert {
     public ProdTopicsInsert() throws IOException {
-        super("output/prod_topics.txt");
+        super("output/prod_topics.txt", MyConstants.ESC);
     }
 
     private final Logger log = LoggerFactory.getLogger(ProdTopicsInsert.class);
@@ -56,19 +56,5 @@ public class ProdTopicsInsert extends BaseInsert {
         produceJdbcTemplate.update("INSERT INTO prod_topics\n" +
                 "(id, tid, page_forum, page_forum_tree_code, page_forum_name, assign_forum, assign_forum_tree_code, assign_forum_name, reply_status, audit_status, auth_status, plan_id, production_standards_id, term_num, query, title, `desc`, sex, age, status, create_on, update_time, title_hash, is_deleted, feedback_count)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
-    }
-
-    @Override
-    public String[] convert(String row) {
-        String[] values = row.split(MyConstants.ESC, -1);
-        for (int i = 0; i < values.length; i++) {
-            if (Objects.equals(values[i], "")) {
-                values[i] = null;
-            }
-            if (Objects.equals(values[i], "NULL")) {
-                values[i] = null;
-            }
-        }
-        return values;
     }
 }

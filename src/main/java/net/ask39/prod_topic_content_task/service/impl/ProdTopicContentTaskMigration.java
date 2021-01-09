@@ -24,8 +24,8 @@ import java.util.List;
 @Lazy
 @Service
 public class ProdTopicContentTaskMigration extends BaseMigration<List<String>> {
-    private static final String SQL_FILE_NAME = "sql/prod_topic_content_task.sql";
-    private static final String OUT_PUT_FILE_NAME = "output/prod_topic_content_task.txt";
+    public static final String SQL_FILE_NAME = "sql/prod_topic_content_task.sql";
+    public static final String OUT_PUT_FILE_NAME = "output/prod_topic_content_task.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
         try {

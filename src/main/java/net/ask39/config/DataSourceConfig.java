@@ -46,4 +46,11 @@ public class DataSourceConfig {
     DataSource produceDataSource() {
         return DataSourceBuilder.create().build();
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.askdata5")
+    @Qualifier("askdata5DataSource")
+    DataSource askdata5DataSource() {
+        return DataSourceBuilder.create().build();
+    }
 }

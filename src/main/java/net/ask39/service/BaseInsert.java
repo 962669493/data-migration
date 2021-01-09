@@ -21,13 +21,15 @@ import java.util.concurrent.TimeUnit;
  **/
 public abstract class BaseInsert {
     private final LineIterator lineIterator;
+    private String regex = MyConstants.HT;
 
     protected BaseInsert(String fileName) throws IOException {
         lineIterator = FileUtils.lineIterator(new File(fileName), MyConstants.CHART_SET.toString());
     }
 
-    protected BaseInsert(String fileName, String charsetName) throws IOException {
-        lineIterator = FileUtils.lineIterator(new File(fileName), charsetName);
+    protected BaseInsert(String fileName, String regex) throws IOException {
+        lineIterator = FileUtils.lineIterator(new File(fileName), MyConstants.CHART_SET.toString());
+        this.regex = regex;
     }
 
     private final Logger log = LoggerFactory.getLogger(BaseInsert.class);
@@ -63,7 +65,7 @@ public abstract class BaseInsert {
     }
 
     public String[] convert(String row) {
-        String[] values = row.split(MyConstants.HT, -1);
+        String[] values = row.split(regex, -1);
         for (int i = 0; i < values.length; i++) {
             if (Objects.equals(values[i], "")) {
                 values[i] = null;
