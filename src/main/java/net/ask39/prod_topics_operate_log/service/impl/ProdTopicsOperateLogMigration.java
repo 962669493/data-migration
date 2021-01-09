@@ -41,7 +41,7 @@ public class ProdTopicsOperateLogMigration extends BaseMigration<List<String>> {
 
     @Override
     public List<String> convert(String line) throws Exception {
-        return Arrays.asList(line.split(MyConstants.HT));
+        return Arrays.asList(line.split(MyConstants.ESC));
     }
 
     @Override

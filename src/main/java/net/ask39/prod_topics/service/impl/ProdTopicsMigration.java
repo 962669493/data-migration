@@ -26,7 +26,7 @@ import java.util.*;
 @Lazy
 @Service
 public class ProdTopicsMigration extends BaseMigration<List<String>> {
-    private static final String SQL_FILE_NAME = "sql/prod_topics.sql";
+    public static final String SQL_FILE_NAME = "sql/prod_topics.sql";
     private static final OutputStream OUTPUT_STREAM;
     private static final OutputStream PROD_REPLY_ORDER_OUTPUT_STREAM;
     private static final OutputStream PROD_AUTH_ORDER_OUTPUT_STREAM;
@@ -44,7 +44,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     }
 
     public ProdTopicsMigration() {
-        super(OUTPUT_STREAM, "GBK");
+        super(OUTPUT_STREAM);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
 
     @Override
     public List<String> convert(String line) {
-        return new ArrayList<>(Arrays.asList(line.split(MyConstants.HT, -1)));
+        return new ArrayList<>(Arrays.asList(line.split(MyConstants.ESC, -1)));
     }
 
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
@@ -111,9 +111,6 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     @Override
     public List<String> process(List<String> values) throws Exception {
         String topicId = values.get(0);
-        if("220604".equals(topicId)){
-            int a =1;
-        }
         String plan_id = values.get(11);
         String production_standards_id = values.get(12);
         String newStandardsId = standardsIdMap.get(production_standards_id);

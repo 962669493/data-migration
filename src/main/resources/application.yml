@@ -6,9 +6,9 @@ spring:
       password: tz_1FzgPRSTzUmpl
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askdata4:
-      jdbc-url: jdbc:sqlserver://219.238.238.120:1322;databaseName=askdata4_20160505;integratedSecurity=false;
-      username: ask_120tPn
-      password: fegs345DF#wQcvW
+      jdbc-url: jdbc:sqlserver://121.201.76.150:1322;databaseName=askdata4;integratedSecurity=false;
+      username: bil893nsoi
+      password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askdata5:
       jdbc-url: jdbc:sqlserver://121.201.76.175;databaseName=askdata5;integratedSecurity=false;
@@ -16,19 +16,19 @@ spring:
       password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     asklog:
-      jdbc-url: jdbc:sqlserver://219.238.238.120;databaseName=AskLogDB;integratedSecurity=false;
-      username: ask_120tPn
-      password: fegs345DF#wQcvW
+      jdbc-url: jdbc:sqlserver://121.201.76.150;databaseName=AskLogDB;integratedSecurity=false;
+      username: bil893nsoi
+      password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askcenter:
-      jdbc-url: jdbc:sqlserver://219.238.238.120:1322;databaseName=Askcenter;integratedSecurity=false;loginTimeout=600
-      username: ask_120tPn
-      password: fegs345DF#wQcvW
+      jdbc-url: jdbc:sqlserver://121.201.76.175:1322;databaseName=Askcenter;integratedSecurity=false;loginTimeout=600
+      username: bil893nsoi
+      password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     produce:
-      username: root
-      password: 123456
-      jdbc-url: jdbc:mysql://192.168.204.129:3306/pd_produce_dev_db?serverTimezone=Asia/Shanghai
+      username: my8test
+      password: QE34ki_bvmk63a
+      jdbc-url: jdbc:mysql://219.238.238.53:3309/pd_produce_db?serverTimezone=Asia/Shanghai
       driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:

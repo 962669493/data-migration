@@ -23,7 +23,7 @@ import java.io.IOException;
 @Service
 public class ProdProductionReplyStandardsInsert extends BaseInsert {
     public ProdProductionReplyStandardsInsert() throws IOException {
-        super(ProdProductionStandardsMigration.REPLY_STANDARDS_OUT_PUT_FILE_NAME);
+        super(ProdProductionStandardsMigration.REPLY_STANDARDS_OUT_PUT_FILE_NAME, MyConstants.ESC);
     }
     private final Logger log = LoggerFactory.getLogger(ProdProductionReplyStandardsInsert.class);
     @Resource(name = "produceJdbcTemplate")

@@ -1,5 +1,6 @@
 package net.ask39.prod_production_standards.service.impl;
 
+import net.ask39.enums.MyConstants;
 import net.ask39.service.BaseInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @Service
 public class ProdProductionStandardsInsert extends BaseInsert {
     public ProdProductionStandardsInsert() throws IOException {
-        super(ProdProductionStandardsMigration.STANDARDS_OUT_PUT_FILE_NAME);
+        super(ProdProductionStandardsMigration.STANDARDS_OUT_PUT_FILE_NAME, MyConstants.ESC);
     }
 
     @Resource(name = "produceJdbcTemplate")
