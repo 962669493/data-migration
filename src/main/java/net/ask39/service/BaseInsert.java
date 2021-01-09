@@ -52,7 +52,7 @@ public abstract class BaseInsert {
         log.info("[{}]insert完成，共[{}]行，耗时[{}]秒", this.getClass().getSimpleName(), i, watch.elapsed(TimeUnit.SECONDS));
     }
 
-    protected abstract void insert(String[] values);
+    protected abstract void insert(String[] values) throws IOException;
     protected void before() throws Exception{
 
     }

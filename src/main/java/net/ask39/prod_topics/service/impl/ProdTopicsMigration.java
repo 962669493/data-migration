@@ -111,6 +111,9 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     @Override
     public List<String> process(List<String> values) throws Exception {
         String topicId = values.get(0);
+        if("220604".equals(topicId)){
+            int a =1;
+        }
         String plan_id = values.get(11);
         String production_standards_id = values.get(12);
         String newStandardsId = standardsIdMap.get(production_standards_id);
@@ -126,26 +129,29 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         values.set(22, String.valueOf(values.get(15).hashCode()));
         // taskId
         String taskIdsStr = values.get(25);
-        if(!StringUtils.isEmpty(taskIdsStr)){
-            Map<String, Integer> taskIds = JsonUtils.string2Obj(taskIdsStr, Map.class);
-            Integer replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
-            Integer authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
-            writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
-            String createTime = values.get(20);
-            if(!StringUtils.isEmpty(newStandardsId)){
-                List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
-                writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
-                writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
-            }
-            if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
-                log.warn("帖子没有对应的生产计划：[{}]生产标准：[{}]", plan_id, newStandardsId);
-            }else if(StringUtils.isEmpty(plan_id)){
-                log.warn("帖子没有对应的生产计划：[{}]", plan_id);
-            }else if(StringUtils.isEmpty(newStandardsId)){
-                log.warn("帖子没有对应的生产标准：[{}]", newStandardsId);
-            }
-        }else{
+        Map<String, Integer> taskIds = JsonUtils.string2Obj(taskIdsStr, Map.class);
+        Integer replyTaskId = null;
+        Integer authTaskId = null;
+        if(StringUtils.isEmpty(taskIdsStr)){
             //log.warn("帖子没有对应的任务：[{}]", values);
+        }else{
+            replyTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.REPLY.getValue()));
+            authTaskId = taskIds.get(String.valueOf(TopicContentTaskTypeEnum.AUTH.getValue()));
+            writerTopicIdAndReplyTaskIdAndAuthTaskId(topicId, replyTaskId, authTaskId);
+        }
+
+        String createTime = values.get(20);
+        if(!StringUtils.isEmpty(newStandardsId)){
+            List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
+            writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
+            writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
+        }
+        if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
+            log.warn("帖子[{}]没有对应的生产计划、生产标准", topicId);
+        }else if(StringUtils.isEmpty(plan_id)){
+            log.warn("帖子[{}]没有对应的生产计划", topicId);
+        }else if(StringUtils.isEmpty(newStandardsId)){
+            log.warn("帖子[{}]没有对应的生产标准", topicId);
         }
         values.remove(25);
         return values;
@@ -162,7 +168,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             data.add(topicId);
             // TODO 更新授权工单的任务配置ID
             data.add(null);
-            data.add(taskId);
+            data.add(taskId != null ? taskId : Long.MAX_VALUE);
             // TODO 更新授权工单的指派授权人ID
             data.add(null);
             // TODO 更新授权工单的回复ID
@@ -189,7 +195,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             data.add(i);
             // TODO 更新答题工单的回复积分
             data.add(null);
-            data.add(taskId);
+            data.add(taskId != null ? taskId : Long.MAX_VALUE);
             // TODO 更新答题工单的指派回复人ID
             data.add(null);
             data.add(replyNos.get(i-1));

@@ -2,6 +2,7 @@ package net.ask39;
 
 import net.ask39.prod_reply.service.impl.ProdReplyExport;
 import net.ask39.prod_reply.service.impl.ProdReplyInsert;
+import net.ask39.prod_reply_audit_order.service.impl.ProdReplyAuditOrderInsert;
 import net.ask39.prod_reply_auth_order.service.impl.ProdAuthOrderInsert;
 import net.ask39.prod_reply_order.service.impl.ProdReplyOrderInsert;
 import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskExport;
@@ -9,6 +10,7 @@ import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskInsert
 import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskMigration;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigInsert;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
+import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -44,7 +46,7 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
         //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File(inputFilePath));
         //applicationContext.getBean(ProdReplyMigration.class).reader(new File(inputFilePath));
-        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(inputFilePath));
+        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File("input/prod_topics.txt"));
 
         //applicationContext.getBean(ProdProductionPlanInsert.class).insert();
         //applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();
@@ -53,6 +55,7 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
         //applicationContext.getBean(ProdTopicsInsert.class).insert();
         //applicationContext.getBean(ProdReplyOrderInsert.class).insert();
         //applicationContext.getBean(ProdAuthOrderInsert.class).insert();
+        //applicationContext.getBean(ProdReplyAuditOrderInsert.class).insert();
         applicationContext.getBean(ProdReplyInsert.class).insert();
         //applicationContext.getBean(ProdTopicContentTaskInsert.class).insert();
         //applicationContext.getBean(ProdTopicTaskConfigInsert.class).insert();
