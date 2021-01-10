@@ -46,31 +46,77 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
 
     @Override
     public void run(String... args) throws Exception {
-        //applicationContext.getBean(ProdTopicContentTaskExport.class).export();
-        //applicationContext.getBean(ProdReplyExport.class).export();
-        //applicationContext.getBean(ProdTopicExport.class).export();
-
-        //applicationContext.getBean(ProdProductionStandardsMigration.class).reader(null);
-        //applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File("input/ProductionPlan.txt"));
-        //applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File("input/TopicContentTask.txt"));
-        //applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File("input/TopicTaskConfig.txt"));
-        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File(ProdTopicExport.OUTPUT_FILE));
-        //applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File("input/AuthTopicsHandleLog.txt"));
-        //applicationContext.getBean(ProdReplyMigration.class).reader(new File("input/IssuePost.txt"));
-        //applicationContext.getBean(ProdTopicsMigration.class).reader(new File("input/AuthTopics.txt"));
-
-        //applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();
-        //applicationContext.getBean(ProdProductionReplyStandardMapInsert.class).insert();
-        //applicationContext.getBean(ProdProductionStandardsInsert.class).insert();
-        //applicationContext.getBean(ProdProductionPlanInsert.class).insert();
-        //applicationContext.getBean(ProdTopicContentTaskInsert.class).insert();
-        applicationContext.getBean(ProdTopicTaskConfigInsert.class).insert();
-        //applicationContext.getBean(ProdTopicsInsert.class).insert();
-        //applicationContext.getBean(ProdReplyOrderInsert.class).insert();
-        //applicationContext.getBean(ProdAuthOrderInsert.class).insert();
-        //applicationContext.getBean(ProdReplyAuditOrderInsert.class).insert();
-        //applicationContext.getBean(ProdReplyInsert.class).insert();
-
+        String type = System.getProperty("type");
+        switch (type){
+            case "11":
+                applicationContext.getBean(ProdTopicContentTaskExport.class).export();
+                break;
+            case "12":
+                applicationContext.getBean(ProdReplyExport.class).export();
+                break;
+            case "13":
+                applicationContext.getBean(ProdTopicExport.class).export();
+                break;
+            case "21":
+                applicationContext.getBean(ProdProductionStandardsMigration.class).reader(null);
+                break;
+            case "22":
+                applicationContext.getBean(ProdProductionPlanMigration.class).reader(new File("input/ProductionPlan.txt"));
+                break;
+            case "23":
+                applicationContext.getBean(ProdTopicContentTaskMigration.class).reader(new File("input/TopicContentTask.txt"));
+                break;
+            case "24":
+                applicationContext.getBean(ProdTopicTaskConfigMigration.class).reader(new File("input/TopicTaskConfig.txt"));
+                break;
+            case "25":
+                applicationContext.getBean(ProdTopicsMigration.class).reader(new File(ProdTopicExport.OUTPUT_FILE));
+                break;
+            case "26":
+                applicationContext.getBean(ProdTopicsOperateLogMigration.class).reader(new File("input/AuthTopicsHandleLog.txt"));
+                break;
+            case "27":
+                applicationContext.getBean(ProdReplyMigration.class).reader(new File("input/IssuePost.txt"));
+                break;
+            case "28":
+                applicationContext.getBean(ProdTopicsMigration.class).reader(new File("input/AuthTopics.txt"));
+                break;
+            case "31":
+                applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();
+                break;
+            case "32":
+                applicationContext.getBean(ProdProductionReplyStandardMapInsert.class).insert();
+                break;
+            case "33":
+                applicationContext.getBean(ProdProductionStandardsInsert.class).insert();
+                break;
+            case "34":
+                applicationContext.getBean(ProdProductionPlanInsert.class).insert();
+                break;
+            case "35":
+                applicationContext.getBean(ProdTopicContentTaskInsert.class).insert();
+                break;
+            case "36":
+                applicationContext.getBean(ProdTopicTaskConfigInsert.class).insert();
+                break;
+            case "37":
+                applicationContext.getBean(ProdTopicsInsert.class).insert();
+                break;
+            case "38":
+                applicationContext.getBean(ProdReplyOrderInsert.class).insert();
+                break;
+            case "39":
+                applicationContext.getBean(ProdAuthOrderInsert.class).insert();
+                break;
+            case "40":
+                applicationContext.getBean(ProdReplyAuditOrderInsert.class).insert();
+                break;
+            case "41":
+                applicationContext.getBean(ProdReplyInsert.class).insert();
+                break;
+            default:
+                throw new RuntimeException("请选择type");
+        }
     }
 
     @Override
