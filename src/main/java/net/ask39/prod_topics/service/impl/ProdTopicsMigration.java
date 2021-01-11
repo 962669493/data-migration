@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
+import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
 import net.ask39.prod_topics.enums.TopicContentTaskTypeEnum;
 import net.ask39.service.BaseMigration;
 import net.ask39.utils.JsonUtils;
@@ -58,7 +59,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     private Map<String, String> standardsIdMap;
     private Map<Integer, TopicExt> topicExtMap;
     private Map<String, List<String>> newStandardsIdAndReplyNos;
-    private Map<String, String> replyStandardsIdAndNeedAuth;
+    private Map<String, String> taskIdAndReplyNo_type;
 
     @Override
     public void before() throws IOException {
@@ -89,12 +90,11 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             newStandardsIdAndReplyNos.put(prodStandardsId, replyNos);
         }
 
-        replyStandardsIdAndNeedAuth = new HashMap<>(64);
-        for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.REPLY_STANDARDS_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
-            String[] values = line.split(MyConstants.ESC);
-            replyStandardsIdAndNeedAuth.put(values[0], values[9]);
+        taskIdAndReplyNo_type = new HashMap<>(256);
+        for (String line : IOUtils.readLines(new FileInputStream("input/TopicTaskConfig.txt"), MyConstants.CHART_SET)) {
+            String[] values = line.split(MyConstants.HT, -1);
+            taskIdAndReplyNo_type.put(values[1] + values[9], values[3]);
         }
-
     }
 
     private final Logger log = LoggerFactory.getLogger(ProdTopicsMigration.class);
@@ -156,9 +156,8 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
 
     private void writerProdAuthOrder(List<String> replyNos, String topicId, Integer taskId, String topicCreateTime) throws IOException {
         for (int i = 1; i <= replyNos.size(); i++) {
-            String replyStandardsId = replyNos.get(i - 1);
-            String needAuth = replyStandardsIdAndNeedAuth.get(replyStandardsId);
-            if(!Objects.equals(needAuth, "1")){
+            String type = taskIdAndReplyNo_type.get(taskId + "" +i);
+            if(!Objects.equals(type, "4")){
                 continue;
             }
             List<Object> data = new ArrayList<>();
@@ -173,7 +172,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             // TODO 更新授权工单的回复人ID
             data.add(null);
             data.add(i);
-            data.add(replyStandardsId);
+            data.add(replyNos.get(i - 1));
             data.add(3);
             // TODO 更新授权工单的回复积分
             data.add(null);
