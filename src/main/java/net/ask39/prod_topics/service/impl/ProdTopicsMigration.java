@@ -91,8 +91,8 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         }
 
         taskIdAndReplyNo_type = new HashMap<>(256);
-        for (String line : IOUtils.readLines(new FileInputStream("input/TopicTaskConfig.txt"), MyConstants.CHART_SET)) {
-            String[] values = line.split(MyConstants.HT, -1);
+        for (String line : IOUtils.readLines(new FileInputStream(ProdTopicTaskConfigMigration.OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
+            String[] values = line.split(MyConstants.ESC);
             taskIdAndReplyNo_type.put(values[1] + values[9], values[3]);
         }
     }
