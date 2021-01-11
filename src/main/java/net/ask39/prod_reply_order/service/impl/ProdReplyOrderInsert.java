@@ -52,6 +52,7 @@ public class ProdReplyOrderInsert extends BaseInsert {
     @Override
     public void insert(String[] values) {
         values[1] = taskIdReplyNo_taskConfigId.get(values[4] + "" + values[2]);
+        // task_config_id
         if (values[1] == null) {
             values[1] = String.valueOf(Long.MAX_VALUE);
         }

@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +31,7 @@ public abstract class BaseExport {
     public void export() throws Exception {
         FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
         Connection connection = getDataSource().getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(FileUtils.readFileToString(new ClassPathResource(sqlFile).getFile(), MyConstants.CHART_SET));
+        PreparedStatement preparedStatement = connection.prepareStatement(FileUtils.readFileToString(new File(sqlFile), MyConstants.CHART_SET));
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.setFetchSize(MyConstants.FETCH_SIZE);
         ResultSetMetaData metaData = resultSet.getMetaData();

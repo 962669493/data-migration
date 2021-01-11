@@ -65,8 +65,8 @@ public class ProdAuthOrderInsert extends BaseInsert {
         }
         values[4] = String.valueOf(Long.MAX_VALUE);
         values[5] = String.valueOf(Long.MAX_VALUE);
-        values[9] = String.valueOf(Integer.MAX_VALUE);
-        produceJdbcTemplate.update("INSERT INTO pd_produce_dev_db.prod_reply_auth_order\n" +
+        values[9] = String.valueOf(0);
+        produceJdbcTemplate.update("INSERT INTO prod_reply_auth_order\n" +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, score, update_time, create_time)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

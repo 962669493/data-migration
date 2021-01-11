@@ -6,7 +6,7 @@ spring:
       password: tz_1FzgPRSTzUmpl
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askdata4:
-      jdbc-url: jdbc:sqlserver://121.201.76.150:1322;databaseName=askdata4;integratedSecurity=false;
+      jdbc-url: jdbc:sqlserver://121.201.76.150;databaseName=askdata4;integratedSecurity=false;
       username: bil893nsoi
       password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -28,7 +28,7 @@ spring:
     produce:
       username: my8test
       password: QE34ki_bvmk63a
-      jdbc-url: jdbc:mysql://219.238.238.53:3309/pd_produce_db?serverTimezone=Asia/Shanghai
+      jdbc-url: jdbc:mysql://10.10.10.53:3309/pd_produce_db?serverTimezone=Asia/Shanghai
       driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:

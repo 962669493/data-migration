@@ -47,9 +47,11 @@ public class ProdTopicsInsert extends BaseInsert {
         if(removeTid.contains(tid)){
             return;
         }
+        // plan_id
         if(values[11] == null){
             values[11] = String.valueOf(Long.MAX_VALUE);
         }
+        // production_standards_id
         if(values[12] == null){
             values[12] = String.valueOf(Long.MAX_VALUE);
         }

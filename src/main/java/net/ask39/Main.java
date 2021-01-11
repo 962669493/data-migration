@@ -9,6 +9,7 @@ import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsM
 import net.ask39.prod_reply.service.impl.ProdReplyExport;
 import net.ask39.prod_reply.service.impl.ProdReplyInsert;
 import net.ask39.prod_reply.service.impl.ProdReplyMigration;
+import net.ask39.prod_reply_audit_order.service.impl.ProdReplyAuditOrderExport;
 import net.ask39.prod_reply_audit_order.service.impl.ProdReplyAuditOrderInsert;
 import net.ask39.prod_reply_auth_order.service.impl.ProdAuthOrderInsert;
 import net.ask39.prod_reply_order.service.impl.ProdReplyOrderInsert;
@@ -57,6 +58,9 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
             case "13":
                 applicationContext.getBean(ProdTopicExport.class).export();
                 break;
+            case "14":
+                applicationContext.getBean(ProdReplyAuditOrderExport.class).export();
+                break;
             case "21":
                 applicationContext.getBean(ProdProductionStandardsMigration.class).reader(null);
                 break;
@@ -77,9 +81,6 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
                 break;
             case "27":
                 applicationContext.getBean(ProdReplyMigration.class).reader(new File("input/IssuePost.txt"));
-                break;
-            case "28":
-                applicationContext.getBean(ProdTopicsMigration.class).reader(new File("input/AuthTopics.txt"));
                 break;
             case "31":
                 applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();

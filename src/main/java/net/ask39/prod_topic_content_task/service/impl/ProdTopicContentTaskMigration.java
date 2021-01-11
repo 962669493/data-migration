@@ -1,16 +1,12 @@
 package net.ask39.prod_topic_content_task.service.impl;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.service.BaseMigration;
-import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;

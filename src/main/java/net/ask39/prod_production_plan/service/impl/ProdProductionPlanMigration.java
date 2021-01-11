@@ -1,7 +1,5 @@
 package net.ask39.prod_production_plan.service.impl;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
 import net.ask39.service.BaseMigration;

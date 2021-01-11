@@ -97,7 +97,7 @@ public class ProdReplyInsert extends BaseInsert {
         values[10] = String.valueOf(0);
         values[13] = String.valueOf(3);
         produceJdbcTemplate.update("INSERT INTO prod_reply\n" +
-                "(id, reply_id, topic_id, forum_id, sources, ip, order_id, reply_no, reply_standard_id, reply_content, score, inner_copy_check_result, outer_copy_ratio, audit_status, is_manual_audit, quality, replier_type, reject_count, qc_state_id, forum_tree_code, forum_tree_value, forum_id_v2, remark, reply_version, machine_audit_status, replier_id, replier_name, update_user, create_on, update_time, is_delete)\n" +
+                "(id, reply_id, topic_id, forum_id, sources, ip, order_id, reply_no, reply_standard_id, reply_content, score, inner_copy_check_result, outer_copy_ratio, audit_status, is_manual_audit, quality, replier_type, reject_count, qc_state_id, page_forum_tree_code, page_forum_tree_value, page_forum, remark, reply_version, machine_audit_status, replier_id, replier_name, update_user, create_on, update_time, is_delete)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }
 }
