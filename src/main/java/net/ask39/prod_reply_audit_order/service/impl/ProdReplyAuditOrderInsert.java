@@ -35,9 +35,17 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     private final Logger log = LoggerFactory.getLogger(ProdReplyAuditOrderInsert.class);
     @Resource(name = "produceJdbcTemplate")
     private JdbcTemplate produceJdbcTemplate;
+    private Map<String, String> tid_topicId;
 
     @Override
     protected void before() throws Exception {
+        tid_topicId = new HashMap<>(1000000);
+        produceJdbcTemplate.query("select id, tid from prod_topics", rs -> {
+            for(;rs.next();){
+                tid_topicId.put(rs.getString(2), rs.getString(1));
+            }
+            return null;
+        });
     }
 
     @Override
@@ -67,11 +75,20 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
             default:
                 break;
         }
+        // task_config_id
         values[1] = String.valueOf(Long.MAX_VALUE);
-        values[2] = String.valueOf(Long.MAX_VALUE);
-        values[3] = String.valueOf(Long.MAX_VALUE);
+        // task_id
+        values[2] = tid_topicId.get(values[2]);
+        if(values[2] == null){
+            values[2] = String.valueOf(Long.MAX_VALUE);
+        }
+        // assigned_id
+        values[3] = String.valueOf(0);
+        // reply_no
         values[6] = String.valueOf(0);
+        // reply_standard_id
         values[7] = String.valueOf(Long.MAX_VALUE);
+        // source
         values[9] = String.valueOf(0);
         produceJdbcTemplate.update("INSERT INTO prod_reply_audit_order\n" +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, source, reject_types, remark, auditor_id, auditor_name, quality, update_time, create_time, is_batch)\n" +

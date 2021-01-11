@@ -53,7 +53,7 @@ public class ProdAuthOrderInsert extends BaseInsert {
 
     @Override
     public void insert(String[] values) {
-        values[1] = taskIdReplyNo_taskConfigId.get(values[4] + "" + values[2]);
+        values[1] = taskIdReplyNo_taskConfigId.get(values[2] + "" + values[6]);
         if (values[1] == null) {
             values[1] = String.valueOf(Long.MAX_VALUE);
         }
@@ -63,8 +63,11 @@ public class ProdAuthOrderInsert extends BaseInsert {
         } else {
             values[3] = taskIdReplyNo_producerId.get(values[2] + "" + values[6]);
         }
+        // reply_id
         values[4] = String.valueOf(Long.MAX_VALUE);
+        // replier_id
         values[5] = String.valueOf(Long.MAX_VALUE);
+        // score
         values[9] = String.valueOf(0);
         produceJdbcTemplate.update("INSERT INTO prod_reply_auth_order\n" +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, score, update_time, create_time)\n" +

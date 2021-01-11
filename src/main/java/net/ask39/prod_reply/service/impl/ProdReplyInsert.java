@@ -63,8 +63,6 @@ public class ProdReplyInsert extends BaseInsert {
         tid_topicId = new HashMap<>(1000000);
         produceJdbcTemplate.query("select id, tid from prod_topics", rs -> {
             for(;rs.next();){
-                rs.getString(1);
-                rs.getString(2);
                 tid_topicId.put(rs.getString(2), rs.getString(1));
             }
             return null;
