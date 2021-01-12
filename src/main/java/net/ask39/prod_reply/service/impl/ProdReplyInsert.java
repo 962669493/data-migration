@@ -36,8 +36,11 @@ import java.util.Set;
 @Lazy
 @Service
 public class ProdReplyInsert extends BaseInsert {
+
+    public static final String INPUT_ISSUE_POST_TXT = "input/IssuePost.txt";
+
     public ProdReplyInsert() throws IOException {
-        super("input/IssuePost.txt", MyConstants.ESC);
+        super(INPUT_ISSUE_POST_TXT, MyConstants.ESC);
     }
 
     private final Logger log = LoggerFactory.getLogger(ProdReplyInsert.class);

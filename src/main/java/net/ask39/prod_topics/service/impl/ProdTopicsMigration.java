@@ -123,6 +123,10 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         String plan_id = values.get(11);
         String production_standards_id = values.get(12);
         String newStandardsId = standardsIdMap.get(production_standards_id);
+        if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
+            log.warn("帖子[{}]没有对应的生产计划或生产标准", topicId);
+            return null;
+        }
         values.set(12, newStandardsId);
         TopicExt topicExt = topicExtMap.get(topicId);
         if(topicExt != null){
@@ -147,18 +151,9 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         }
 
         String createTime = values.get(20);
-        if(!StringUtils.isEmpty(newStandardsId)){
-            List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
-            writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
-            writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
-        }
-        if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
-            log.warn("帖子[{}]没有对应的生产计划、生产标准", topicId);
-        }else if(StringUtils.isEmpty(plan_id)){
-            log.warn("帖子[{}]没有对应的生产计划", topicId);
-        }else if(StringUtils.isEmpty(newStandardsId)){
-            log.warn("帖子[{}]没有对应的生产标准", topicId);
-        }
+        List<String> replyNos = newStandardsIdAndReplyNos.get(newStandardsId);
+        writerProdReplyOrder(replyNos, topicId, replyTaskId, createTime);
+        writerProdAuthOrder(replyNos, topicId, authTaskId, createTime);
         values.remove(25);
         return values;
     }
