@@ -16,6 +16,8 @@ import net.ask39.prod_reply_order.service.impl.ProdReplyOrderInsert;
 import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskExport;
 import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskInsert;
 import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskMigration;
+import net.ask39.prod_topic_task_map.service.impl.ProdTopicTaskMapInsert;
+import net.ask39.prod_topic_task_map.service.impl.ProdTopicTaskMapMigration;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigInsert;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
 import net.ask39.prod_topics.service.impl.ProdTopicExport;
@@ -82,6 +84,9 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
             case "27":
                 applicationContext.getBean(ProdReplyMigration.class).reader(new File("input/IssuePost.txt"));
                 break;
+            case "28":
+                applicationContext.getBean(ProdTopicTaskMapMigration.class).reader(new File(ProdTopicsMigration.OUTPUT_TOPIC_ID_REPLY_TASK_ID_AUTH_TASK_ID_TXT));
+                break;
             case "31":
                 applicationContext.getBean(ProdProductionReplyStandardsInsert.class).insert();
                 break;
@@ -114,6 +119,9 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
                 break;
             case "41":
                 applicationContext.getBean(ProdReplyInsert.class).insert();
+                break;
+            case "42":
+                applicationContext.getBean(ProdTopicTaskMapInsert.class).insert();
                 break;
             default:
                 throw new RuntimeException("请选择type");

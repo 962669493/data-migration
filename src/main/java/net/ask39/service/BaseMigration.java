@@ -48,6 +48,9 @@ public abstract class BaseMigration<T extends List<String>> implements Migration
 
     @Override
     public void writer(T t) throws Exception {
+        if(t == null){
+            return;
+        }
         IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("").join(t)), System.getProperty("line.separator"), outputStream, MyConstants.CHART_SET);
     }
 

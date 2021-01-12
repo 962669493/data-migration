@@ -33,12 +33,14 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     private static final OutputStream PROD_AUTH_ORDER_OUTPUT_STREAM;
     private static final OutputStream TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM;
 
+    public static final String OUTPUT_TOPIC_ID_REPLY_TASK_ID_AUTH_TASK_ID_TXT = "output/topic_id-reply_task_id-auth_task_id.txt";
+
     static {
         try {
             OUTPUT_STREAM = new FileOutputStream("output/prod_topics.txt");
             PROD_REPLY_ORDER_OUTPUT_STREAM = new FileOutputStream("output/prod_reply_order.txt");
             PROD_AUTH_ORDER_OUTPUT_STREAM = new FileOutputStream("output/prod_auth_order.txt");
-            TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM = new FileOutputStream("output/topic_id-reply_task_id-auth_task_id.txt");
+            TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM = new FileOutputStream(OUTPUT_TOPIC_ID_REPLY_TASK_ID_AUTH_TASK_ID_TXT);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -105,7 +107,14 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     }
 
     private void writerTopicIdAndReplyTaskIdAndAuthTaskId(String topicId, Integer replyTaskId, Integer authTaskId) throws IOException {
-        IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).join(Lists.newArrayList(topicId, replyTaskId, authTaskId))), System.getProperty("line.separator"), TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM, MyConstants.CHART_SET);
+        List<String> datas = new ArrayList<>(2);
+        if(Objects.equals(replyTaskId, authTaskId)){
+            datas.add(Joiner.on(MyConstants.ESC).join(Lists.newArrayList(topicId, replyTaskId, "2")));
+        }else{
+            datas.add(Joiner.on(MyConstants.ESC).join(Lists.newArrayList(topicId, replyTaskId, "2")));
+            datas.add(Joiner.on(MyConstants.ESC).join(Lists.newArrayList(topicId, authTaskId, "4")));
+        }
+        IOUtils.writeLines(datas, System.getProperty("line.separator"), TOPIC_ID_AND_REPLY_TASK_ID_AND_AUTH_TASK_ID_OUTPUT_STREAM, MyConstants.CHART_SET);
     }
 
     @Override
