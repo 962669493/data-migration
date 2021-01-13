@@ -28,8 +28,8 @@ public class ProdTopicsInsert extends BaseInsert {
     private final Logger log = LoggerFactory.getLogger(ProdTopicsInsert.class);
     @Resource(name = "produceJdbcTemplate")
     private JdbcTemplate produceJdbcTemplate;
-    @Resource(name = "askcenterJdbcTemplate")
-    private JdbcTemplate askcenterJdbcTemplate;
+    @Resource(name = "askconfigJdbcTemplate")
+    private JdbcTemplate askconfigJdbcTemplate;
 
     private Set<String> removeTid;
     private Map<String, Forum> forumId_Forum;
@@ -45,7 +45,7 @@ public class ProdTopicsInsert extends BaseInsert {
         removeTid.add("66635511");
 
         forumId_Forum = new HashMap<>(90000);
-        askcenterJdbcTemplate.query("select ForumID, ForumName, TreeCode from ForumBaseInfo", rs -> {
+        askconfigJdbcTemplate.query("select ForumID, ForumName, TreeCode from ForumBaseInfo", rs -> {
             for(;rs.next();){
                 forumId_Forum.put(rs.getString(1), new Forum(rs.getString(2), rs.getString(3)));
             }

@@ -1,7 +1,7 @@
 spring:
   datasource:
     askconfig:
-      jdbc-url: jdbc:sqlserver://10.10.10.88;databaseName=askconfig;integratedSecurity=false;
+      jdbc-url: jdbc:sqlserver://121.201.76.175:1322;databaseName=askconfig;integratedSecurity=false;
       username: ask_lepqIEQ88
       password: tz_1FzgPRSTzUmpl
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -21,7 +21,7 @@ spring:
       password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     askcenter:
-      jdbc-url: jdbc:sqlserver://121.201.76.175:1322;databaseName=Askcenter;integratedSecurity=false;loginTimeout=600
+      jdbc-url: jdbc:sqlserver://121.201.76.175;databaseName=Askcenter;integratedSecurity=false;loginTimeout=600
       username: bil893nsoi
       password: y3wn#pq85nzwal
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
