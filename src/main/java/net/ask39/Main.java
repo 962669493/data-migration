@@ -111,14 +111,14 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
             case "38":
                 applicationContext.getBean(ProdReplyOrderInsert.class).insert();
                 break;
-            case "39":
-                applicationContext.getBean(ProdAuthOrderInsert.class).insert();
-                break;
             case "40":
                 applicationContext.getBean(ProdReplyAuditOrderInsert.class).insert();
                 break;
             case "41":
                 applicationContext.getBean(ProdReplyInsert.class).insert();
+                break;
+            case "39":
+                applicationContext.getBean(ProdAuthOrderInsert.class).insert();
                 break;
             case "42":
                 applicationContext.getBean(ProdTopicTaskMapInsert.class).insert();

@@ -55,6 +55,7 @@ public class ProdReplyOrderInsert extends BaseInsert {
         // task_config_id
         if (values[1] == null) {
             values[1] = String.valueOf(Long.MAX_VALUE);
+            return;
         }
         String producer_id = values[5];
         if (StringUtils.isEmpty(producer_id)) {
