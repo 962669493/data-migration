@@ -23,6 +23,7 @@ import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigratio
 import net.ask39.prod_topics.service.impl.ProdTopicExport;
 import net.ask39.prod_topics.service.impl.ProdTopicsInsert;
 import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
+import net.ask39.prod_topics.service.impl.TopicExtExport;
 import net.ask39.prod_topics_operate_log.service.impl.ProdTopicsOperateLogMigration;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.CommandLineRunner;
@@ -62,6 +63,9 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
                 break;
             case "14":
                 applicationContext.getBean(ProdReplyAuditOrderExport.class).export();
+                break;
+            case "15":
+                applicationContext.getBean(TopicExtExport.class).export();
                 break;
             case "21":
                 applicationContext.getBean(ProdProductionStandardsMigration.class).reader(null);

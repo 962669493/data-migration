@@ -46,8 +46,11 @@ public class ProdReplyInsert extends BaseInsert {
     private final Logger log = LoggerFactory.getLogger(ProdReplyInsert.class);
     @Resource(name = "produceJdbcTemplate")
     private JdbcTemplate produceJdbcTemplate;
+    @Resource(name = "askcenterJdbcTemplate")
+    private JdbcTemplate askcenterJdbcTemplate;
     private Map<String, String> topicIdReplyNo_id;
     private Map<String, String> tid_topicId;
+    private Map<String, Integer> replyIdAndTypeLv2_score;
     private Set<String> replyOrderIds;
     private OutputStream error;
 
@@ -67,6 +70,16 @@ public class ProdReplyInsert extends BaseInsert {
         produceJdbcTemplate.query("select id, tid from prod_topics", rs -> {
             for(;rs.next();){
                 tid_topicId.put(rs.getString(2), rs.getString(1));
+            }
+            return null;
+        });
+
+        replyIdAndTypeLv2_score = new HashMap<>(2000000);
+        askcenterJdbcTemplate.query("SELECT t1.Score, t1.replyid, t1.TypeLv2 from MemberPointsDetailAudit t1\n" +
+                "where t1.replyID is not null and TypeLv1  = 2", rs -> {
+            for(;rs.next();){
+                tid_topicId.put(rs.getString(2), rs.getString(1));
+                replyIdAndTypeLv2_score.put(rs.getString(2) + rs.getString(3), rs.getInt(rs.getString(1)));
             }
             return null;
         });
@@ -95,7 +108,15 @@ public class ProdReplyInsert extends BaseInsert {
             replyOrderIds.add(values[6]);
         }
         values[8] = String.valueOf(Long.MAX_VALUE);
-        values[10] = String.valueOf(0);
+        Integer replyScore = replyIdAndTypeLv2_score.get(values[0] + "7");
+        if(replyScore == null){
+            replyScore = 0;
+        }
+        Integer doctorScore = replyIdAndTypeLv2_score.get(values[0] + "8");
+        if(doctorScore == null){
+            doctorScore = 0;
+        }
+        values[10] = String.valueOf(replyScore + doctorScore);
         values[13] = String.valueOf(3);
         produceJdbcTemplate.update("INSERT INTO prod_reply\n" +
                 "(id, reply_id, topic_id, forum_id, sources, ip, order_id, reply_no, reply_standard_id, reply_content, score, inner_copy_check_result, outer_copy_ratio, audit_status, is_manual_audit, quality, replier_type, reject_count, qc_state_id, page_forum_tree_code, page_forum_tree_value, page_forum, remark, reply_version, machine_audit_status, replier_id, replier_name, update_user, create_on, update_time, is_delete)\n" +
