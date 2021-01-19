@@ -18,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -111,9 +113,14 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
     @Override
     public void reader(File file) throws Exception {
         before();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date endTime = format.parse(MyConstants.END_TIME);
         List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
         for(ProductionStandardsDoc productionStandardsDoc : all){
-            process(productionStandardsDoc);
+            Date createOn = productionStandardsDoc.getCreateOn();
+            if(createOn.compareTo(endTime) <= 0){
+                process(productionStandardsDoc);
+            }
         }
         after();
     }

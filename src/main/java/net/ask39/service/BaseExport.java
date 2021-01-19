@@ -31,7 +31,9 @@ public abstract class BaseExport {
     public void export() throws Exception {
         FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
         Connection connection = getDataSource().getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(FileUtils.readFileToString(new File(sqlFile), MyConstants.CHART_SET));
+        String sql = FileUtils.readFileToString(new File(sqlFile), MyConstants.CHART_SET);
+        log.info("sql：{}", sql);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.setFetchSize(MyConstants.FETCH_SIZE);
         ResultSetMetaData metaData = resultSet.getMetaData();

@@ -23,7 +23,7 @@ import java.util.*;
 @Lazy
 @Service
 public class ProdProductionPlanMigration extends BaseMigration<List<String>> {
-    private static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
+    public static final String SQL_FILE_NAME = "sql/prod_production_plan.sql";
     public static final String OUT_PUT_FILE_NAME = "output/prod_production_plan.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
@@ -52,7 +52,7 @@ public class ProdProductionPlanMigration extends BaseMigration<List<String>> {
 
     @Override
     public List<String> convert(String line) {
-        return Arrays.asList(line.split("\\|", -1));
+        return Arrays.asList(line.split(MyConstants.ESC, -1));
     }
 
     @Override

@@ -31,3 +31,4 @@ FROM
 	AuthTopics t1
 left join ProductionPlan t2
 on t1.planId = t2.id
+where t1.createOn <= '2021-01-19 10:30:00'

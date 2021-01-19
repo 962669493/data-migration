@@ -1,5 +1,6 @@
 package net.ask39;
 
+import net.ask39.prod_production_plan.service.impl.ProdProductionPlanExport;
 import net.ask39.prod_production_plan.service.impl.ProdProductionPlanInsert;
 import net.ask39.prod_production_plan.service.impl.ProdProductionPlanMigration;
 import net.ask39.prod_production_reply_standard_map.service.impl.ProdProductionReplyStandardMapInsert;
@@ -54,6 +55,9 @@ public class Main implements CommandLineRunner, ApplicationContextAware {
         switch (type){
             case "11":
                 applicationContext.getBean(ProdTopicContentTaskExport.class).export();
+                break;
+            case "16":
+                applicationContext.getBean(ProdProductionPlanExport.class).export();
                 break;
             case "12":
                 applicationContext.getBean(ProdReplyExport.class).export();

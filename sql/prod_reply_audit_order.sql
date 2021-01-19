@@ -20,3 +20,4 @@ SELECT
 FROM
 	ReplyAuditResult t1
 where EXISTS (select 1 from AuthTopics t2 where t2.tid = t1.tid)
+and t1.createOn <= '2021-01-19 10:30:00'

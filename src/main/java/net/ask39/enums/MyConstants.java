@@ -18,4 +18,6 @@ public class MyConstants {
     public static final int FETCH_SIZE = 10000;
     /** IO编码格式 */
     public static final Charset CHART_SET = StandardCharsets.UTF_8;
+
+    public static final String END_TIME = "2021-01-19 10:30:00";
 }

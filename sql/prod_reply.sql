@@ -32,4 +32,4 @@ SELECT
 	0 is_delete
 FROM
 	IssuePost t1
-where t1.IsTopic != 1 and t1.VoteNum != 0
+where t1.IsTopic != 1 and t1.VoteNum != 0 and t1.CreateOn <= '2021-01-19 10:30:00'

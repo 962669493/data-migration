@@ -20,3 +20,4 @@ SELECT
 	-- needTask,
 FROM
 	ProductionPlan
+where createOn <= '2021-01-19 10:30:00'

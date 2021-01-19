@@ -48,7 +48,7 @@ public class ProdReplyExport {
     public void export() throws SQLException, IOException {
         before();
         int total = 0;
-        PreparedStatement preparedStatement = askdata4Connection.prepareStatement("select tid from AuthTopics");
+        PreparedStatement preparedStatement = askdata4Connection.prepareStatement("select tid from AuthTopics where createOn <= '"+ MyConstants.END_TIME + "'");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Integer> tids = new ArrayList<>(1000);
         for (int i = 0, k = 0; resultSet.next(); i++) {
@@ -65,6 +65,7 @@ public class ProdReplyExport {
     private int exportReplyByTid(List<Integer> tids) throws IOException, SQLException {
         String sql = FileUtils.readFileToString(new File(ProdReplyMigration.SQL_FILE_NAME), StandardCharsets.UTF_8) +
                 " and t1.tid in (" + Joiner.on(",").join(tids) + ")";
+        //log.info("sql：{}", sql);
         PreparedStatement preparedStatement = askdata5Connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         ResultSetMetaData metaData = resultSet.getMetaData();
