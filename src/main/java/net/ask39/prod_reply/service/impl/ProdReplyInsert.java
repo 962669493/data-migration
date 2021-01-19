@@ -52,11 +52,16 @@ public class ProdReplyInsert extends BaseInsert {
     private Map<String, String> tid_topicId;
     private Map<String, Integer> replyIdAndTypeLv2_score;
     private Set<String> replyOrderIds;
-    private OutputStream error;
+    private OutputStream replyContentIsNull;
+    private OutputStream notExistReplyOrder;
+    private OutputStream repeatReplyOrder;
 
     @Override
     protected void before() throws Exception {
-        error = new FileOutputStream("output/error_prod_reply.txt");
+        replyContentIsNull = new FileOutputStream("output/回复内容为空.txt");
+        notExistReplyOrder = new FileOutputStream("output/不存在答题工单.txt");
+        repeatReplyOrder = new FileOutputStream("output/重复的答题工单.txt");
+
         replyOrderIds = new HashSet<>(1000000);
         topicIdReplyNo_id = new HashMap<>(1000000);
         produceJdbcTemplate.query("select id, topic_id, reply_no from prod_reply_order", rs -> {
@@ -76,10 +81,10 @@ public class ProdReplyInsert extends BaseInsert {
 
         replyIdAndTypeLv2_score = new HashMap<>(2000000);
         askcenterJdbcTemplate.query("SELECT t1.Score, t1.replyid, t1.TypeLv2 from MemberPointsDetailAudit t1\n" +
-                "where t1.replyID is not null and TypeLv1  = 2", rs -> {
+                "where t1.replyID is not null and t1.TypeLv1  = 2", rs -> {
             for(;rs.next();){
                 tid_topicId.put(rs.getString(2), rs.getString(1));
-                replyIdAndTypeLv2_score.put(rs.getString(2) + rs.getString(3), rs.getInt(rs.getString(1)));
+                replyIdAndTypeLv2_score.put(rs.getString(2) + rs.getString(3), rs.getInt(1));
             }
             return null;
         });
@@ -87,22 +92,21 @@ public class ProdReplyInsert extends BaseInsert {
 
     @Override
     public void insert(String[] values) throws IOException {
-        log.info("values:[{}]", values[0]);
         String replyContent = values[9];
         if(!StringUtils.isEmpty(replyContent)){
             values[9] = replyContent.replaceAll(MyConstants.SUB, "\n");
         }else{
-            IOUtils.writeLines(Lists.newArrayList("回复内容为null:" +Joiner.on(MyConstants.ESC).useForNull("").join(values)), System.getProperty("line.separator"), error, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), replyContentIsNull, MyConstants.CHART_SET);
             values[9] = "";
         }
         values[2] = tid_topicId.get(values[2]);
         values[6] = topicIdReplyNo_id.get(values[2] + values[7]);
         if(values[6] == null){
-            IOUtils.writeLines(Lists.newArrayList("不存在答题工单，可能帖子不存在生产标准或生产计划:" +Joiner.on(MyConstants.ESC).useForNull("").join(values)), System.getProperty("line.separator"), error, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), notExistReplyOrder, MyConstants.CHART_SET);
             return;
         }
         if(replyOrderIds.contains(values[6])){
-            IOUtils.writeLines(Lists.newArrayList("重复的答题工单:" +Joiner.on(MyConstants.ESC).useForNull("").join(values)), System.getProperty("line.separator"), error, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), repeatReplyOrder, MyConstants.CHART_SET);
             return;
         }else{
             replyOrderIds.add(values[6]);

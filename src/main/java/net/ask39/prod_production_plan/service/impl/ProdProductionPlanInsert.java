@@ -1,9 +1,13 @@
 package net.ask39.prod_production_plan.service.impl;
 
+import com.google.common.base.Joiner;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_production_standards.service.impl.ProdProductionStandardsMigration;
+import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
 import net.ask39.service.BaseInsert;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -27,27 +31,21 @@ import java.util.Map;
 @Service
 public class ProdProductionPlanInsert extends BaseInsert {
     public ProdProductionPlanInsert() throws IOException {
-        super("input/ProductionPlan.txt");
+        super("output/prod_production_plan.txt", MyConstants.ESC);
     }
 
     @Resource(name = "produceJdbcTemplate")
     private JdbcTemplate produceJdbcTemplate;
 
-    private Map<String, Integer> standardsIdMap;
-
     @Override
     public void before() throws Exception {
-        standardsIdMap = new HashMap<>(256);
-        List<String> readLines = IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET);
-        for(String line:readLines){
-            String[] split = line.split(MyConstants.ESC);
-            standardsIdMap.put(split[0], Integer.valueOf(split[1]));
-        }
+
     }
+
+    private final Logger log = LoggerFactory.getLogger(ProdProductionPlanInsert.class);
 
     @Override
     public void insert(String[] values) {
-        values[12] = String.valueOf(standardsIdMap.get(values[12]));
         String topics_num = values[3];
         String reply_schedule = values[6];
         if(!StringUtils.isEmpty(reply_schedule)){

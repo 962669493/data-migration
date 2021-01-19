@@ -20,7 +20,7 @@ import java.util.List;
 @Lazy
 @Service
 public class ProdTopicTaskConfigMigration extends BaseMigration<List<String>> {
-    private static final String SQL_FILE_NAME = "sql/prod_topic_task_config.sql";
+    public static final String SQL_FILE_NAME = "sql/prod_topic_task_config.sql";
     public static final String OUT_PUT_FILE_NAME = "output/prod_topic_task_config.txt";
     private static final OutputStream OUTPUT_STREAM;
     static {
@@ -37,7 +37,7 @@ public class ProdTopicTaskConfigMigration extends BaseMigration<List<String>> {
 
     @Override
     public List<String> convert(String line) throws Exception {
-        return Arrays.asList(line.split(MyConstants.HT));
+        return Arrays.asList(line.split(MyConstants.ESC));
     }
 
     @Override

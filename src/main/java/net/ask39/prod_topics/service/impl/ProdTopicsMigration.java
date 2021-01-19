@@ -59,25 +59,18 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
     }
 
     private Map<String, String> standardsIdMap;
-    private Map<Integer, TopicExt> topicExtMap;
     private Map<String, List<String>> newStandardsIdAndReplyNos;
     private Map<String, String> taskIdAndReplyNo_type;
+    private OutputStream noStandardOrPlan;
 
     @Override
     public void before() throws IOException {
+        noStandardOrPlan = new FileOutputStream("output/帖子没有生产计划或生产标准");
+
         standardsIdMap = new HashMap<>(64);
         for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
             String[] split = line.split(MyConstants.ESC);
             standardsIdMap.put(split[0], split[1]);
-        }
-
-        topicExtMap = new HashMap<>(2048);
-        for (String line : IOUtils.readLines(new FileInputStream("input/TopicExt.txt"), MyConstants.CHART_SET)) {
-            String[] values = line.split(MyConstants.ESC);
-            TopicExt topicExt = new TopicExt();
-            topicExt.setSex(Integer.valueOf(values[1]));
-            topicExt.setAge(values[2]);
-            topicExtMap.put(Integer.valueOf(values[0]), topicExt);
         }
 
         newStandardsIdAndReplyNos = new HashMap<>(64);
@@ -123,18 +116,11 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         String plan_id = values.get(11);
         String production_standards_id = values.get(12);
         String newStandardsId = standardsIdMap.get(production_standards_id);
-        if(StringUtils.isEmpty(plan_id) && StringUtils.isEmpty(newStandardsId)){
-            log.warn("帖子[{}]没有对应的生产计划或生产标准", topicId);
+        if(StringUtils.isEmpty(plan_id) || StringUtils.isEmpty(newStandardsId)){
+            IOUtils.writeLines(Lists.newArrayList(topicId), System.getProperty("line.separator"), noStandardOrPlan, MyConstants.CHART_SET);
             return null;
         }
         values.set(12, newStandardsId);
-        TopicExt topicExt = topicExtMap.get(topicId);
-        if(topicExt != null){
-            // sex
-            values.set(13, String.valueOf(topicExt.getSex()));
-            // age
-            values.set(14, String.valueOf(topicExt.getAge()));
-        }
         // title_hash
         values.set(22, String.valueOf(values.get(15).hashCode()));
         // taskId
@@ -203,27 +189,6 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
             data.add(topicCreateTime);
             data.add(topicCreateTime);
             IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("").join(data)), System.getProperty("line.separator"), PROD_REPLY_ORDER_OUTPUT_STREAM, MyConstants.CHART_SET);
-        }
-    }
-
-    class TopicExt {
-        private Integer sex;
-        private String age;
-
-        public Integer getSex() {
-            return sex;
-        }
-
-        public void setSex(Integer sex) {
-            this.sex = sex;
-        }
-
-        public String getAge() {
-            return age;
-        }
-
-        public void setAge(String age) {
-            this.age = age;
         }
     }
 }

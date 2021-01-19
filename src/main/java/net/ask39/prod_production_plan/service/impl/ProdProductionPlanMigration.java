@@ -62,20 +62,8 @@ public class ProdProductionPlanMigration extends BaseMigration<List<String>> {
         if(production_standards_id != null){
             values.set(12, String.valueOf(production_standards_id));
         }else{
-            values.set(12, "");
+            values.set(12, String.valueOf(Long.MAX_VALUE));
         }
         return values;
-    }
-
-    @Resource(name = "produceJdbcTemplate")
-    private JdbcTemplate produceJdbcTemplate;
-
-    public void insert() throws Exception{
-        try(LineIterator it = FileUtils.lineIterator(new File(OUT_PUT_FILE_NAME), MyConstants.CHART_SET.toString())) {
-            while (it.hasNext()) {
-                String values = it.nextLine().replaceAll(MyConstants.ESC, ",");
-                produceJdbcTemplate.update("insert into prod_production_plan values (" + values +")");
-            }
-        }
     }
 }

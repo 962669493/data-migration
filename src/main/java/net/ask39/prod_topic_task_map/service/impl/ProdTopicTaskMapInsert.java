@@ -37,7 +37,7 @@ public class ProdTopicTaskMapInsert extends BaseInsert {
 
     @Override
     public void insert(String[] values) {
-        produceJdbcTemplate.update("INSERT INTO pd_produce_db.prod_topic_task_map\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_topic_task_map\n" +
                 "(topic_id, task_id, `type`)\n" +
                 "VALUES(?, ?, ?)", values);
     }

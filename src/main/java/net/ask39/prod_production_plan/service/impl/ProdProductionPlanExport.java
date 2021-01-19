@@ -18,10 +18,11 @@ import java.util.List;
 @Lazy
 @Service
 public class ProdProductionPlanExport extends BaseExport {
+    public static final String INPUT_PRODUCTION_PLAN_TXT = "input/ProductionPlan.txt";
     @Resource(name = "askdata4DataSource")
     DataSource dataSource;
     public ProdProductionPlanExport() {
-        super(ProdProductionPlanMigration.SQL_FILE_NAME, "input/ProductionPlan.txt");
+        super(ProdProductionPlanMigration.SQL_FILE_NAME, INPUT_PRODUCTION_PLAN_TXT);
     }
 
     @Override

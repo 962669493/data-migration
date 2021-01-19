@@ -58,7 +58,7 @@ public class ProdTopicsInsert extends BaseInsert {
         });
 
         tid_Person = new HashMap<>(5000);
-        for (String line : IOUtils.readLines(new FileInputStream(ProdTopicTaskConfigMigration.OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
+        for (String line : IOUtils.readLines(new FileInputStream("input/TopicExt.txt"), MyConstants.CHART_SET)) {
             String[] values = line.split(MyConstants.ESC, -1);
             tid_Person.put(values[0], new Person(values[1], values[2]));
         }
