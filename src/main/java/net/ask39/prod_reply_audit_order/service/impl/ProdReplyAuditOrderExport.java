@@ -1,6 +1,5 @@
 package net.ask39.prod_reply_audit_order.service.impl;
 
-import net.ask39.prod_topics.service.impl.ProdTopicsMigration;
 import net.ask39.service.BaseExport;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

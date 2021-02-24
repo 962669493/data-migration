@@ -2,8 +2,6 @@ package net.ask39.service;
 
 import com.google.common.base.Stopwatch;
 import net.ask39.enums.MyConstants;
-import net.ask39.prod_production_plan.service.impl.ProdProductionPlanMigration;
-import net.ask39.prod_topics.service.impl.ProdTopicsInsert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.slf4j.Logger;
@@ -11,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +50,8 @@ public abstract class BaseInsert {
     }
 
     protected abstract void insert(String[] values) throws IOException;
-    protected void before() throws Exception{
+
+    protected void before() throws Exception {
 
     }
 
