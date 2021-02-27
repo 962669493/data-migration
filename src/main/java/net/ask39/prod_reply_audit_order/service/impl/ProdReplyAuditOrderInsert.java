@@ -41,7 +41,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     @Override
     protected void before() throws Exception {
         tid_topicId = new HashMap<>(1000000);
-        produceJdbcTemplate.query("select id, tid from prod_topics210224", rs -> {
+        produceJdbcTemplate.query("select id, tid from prod_topics" + MyConstants.TABLE_SUFFIX, rs -> {
             for(;rs.next();){
                 tid_topicId.put(rs.getString(2), rs.getString(1));
             }
@@ -96,7 +96,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         values[7] = String.valueOf(Long.MAX_VALUE);
         // source
         values[9] = String.valueOf(0);
-        produceJdbcTemplate.update("INSERT INTO prod_reply_audit_order210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply_audit_order" + MyConstants.TABLE_SUFFIX +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, source, reject_types, remark, auditor_id, auditor_name, quality, update_time, create_time, is_batch)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

@@ -1,5 +1,6 @@
 package net.ask39.prod_reply.service.impl;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.service.BaseInsert;
@@ -59,7 +60,7 @@ public class ProdReplyInsert extends BaseInsert {
 
         replyOrderIds = new HashSet<>(1000000);
         topicIdReplyNo_id = new HashMap<>(1000000);
-        produceJdbcTemplate.query("select id, topic_id, reply_no from prod_reply_order210224", rs -> {
+        produceJdbcTemplate.query("select id, topic_id, reply_no from prod_reply_order" + MyConstants.TABLE_SUFFIX, rs -> {
             for (; rs.next(); ) {
                 topicIdReplyNo_id.put(rs.getString(2) + "" + rs.getString(3), rs.getString(1));
             }
@@ -67,7 +68,7 @@ public class ProdReplyInsert extends BaseInsert {
         });
 
         tid_topicId = new HashMap<>(1000000);
-        produceJdbcTemplate.query("select id, tid from prod_topics210224", rs -> {
+        produceJdbcTemplate.query("select id, tid from prod_topics" + MyConstants.TABLE_SUFFIX, rs -> {
             for (; rs.next(); ) {
                 tid_topicId.put(rs.getString(2), rs.getString(1));
             }
@@ -97,7 +98,7 @@ public class ProdReplyInsert extends BaseInsert {
         if (!StringUtils.isEmpty(replyContent)) {
             values[9] = replyContent.replaceAll(MyConstants.SUB, "\n");
         } else {
-            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), replyContentIsNull, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), replyContentIsNull, MyConstants.CHART_SET);
             values[9] = "";
         }
         values[2] = tid_topicId.get(values[2]);
@@ -107,11 +108,11 @@ public class ProdReplyInsert extends BaseInsert {
         }
         values[6] = topicIdReplyNo_id.get(values[2] + values[7]);
         if (values[6] == null) {
-            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), notExistReplyOrder, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), notExistReplyOrder, MyConstants.CHART_SET);
             return;
         }
         if (replyOrderIds.contains(values[6])) {
-            IOUtils.writeLines(Lists.newArrayList(values[0]), System.getProperty("line.separator"), repeatReplyOrder, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), repeatReplyOrder, MyConstants.CHART_SET);
             return;
         } else {
             replyOrderIds.add(values[6]);
@@ -130,7 +131,7 @@ public class ProdReplyInsert extends BaseInsert {
         if (!replierIdAndReplierType.isEmpty()) {
             values[16] = replierIdAndReplierType.get(values[25]);
         }
-        produceJdbcTemplate.update("INSERT INTO prod_reply210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply" + MyConstants.TABLE_SUFFIX +
                 "(id, reply_id, topic_id, forum_id, sources, ip, order_id, reply_no, reply_standard_id, reply_content, score, inner_copy_check_result, outer_copy_ratio, audit_status, is_manual_audit, quality, replier_type, reject_count, qc_state_id, page_forum_tree_code, page_forum_tree_value, page_forum, remark, reply_version, machine_audit_status, replier_id, replier_name, update_user, create_on, update_time, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

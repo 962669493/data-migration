@@ -38,7 +38,7 @@ public class ProdTopicTaskConfigInsert extends BaseInsert {
                 values[8] = "0";
             }
         }
-        produceJdbcTemplate.update("INSERT INTO prod_topic_task_config210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_topic_task_config" + MyConstants.TABLE_SUFFIX +
                 "(id, task_id, task_name, `type`, doctor_type, is_assigned, assigned_id, doctor_tag, score, reply_no, create_on, create_name, update_time, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

@@ -65,7 +65,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
 
     @Override
     public void before() throws IOException {
-        noStandardOrPlan = new FileOutputStream("output/帖子没有生产计划或生产标准");
+        noStandardOrPlan = new FileOutputStream("output/帖子没有生产计划或生产标准.txt");
 
         standardsIdMap = new HashMap<>(64);
         for (String line : IOUtils.readLines(new FileInputStream(ProdProductionStandardsMigration.STANDARDS_ID_OUT_PUT_FILE_NAME), MyConstants.CHART_SET)) {
@@ -117,7 +117,7 @@ public class ProdTopicsMigration extends BaseMigration<List<String>> {
         String production_standards_id = values.get(12);
         String newStandardsId = standardsIdMap.get(production_standards_id);
         if(StringUtils.isEmpty(plan_id) || StringUtils.isEmpty(newStandardsId)){
-            IOUtils.writeLines(Lists.newArrayList(topicId), System.getProperty("line.separator"), noStandardOrPlan, MyConstants.CHART_SET);
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), noStandardOrPlan, MyConstants.CHART_SET);
             return null;
         }
         values.set(12, newStandardsId);

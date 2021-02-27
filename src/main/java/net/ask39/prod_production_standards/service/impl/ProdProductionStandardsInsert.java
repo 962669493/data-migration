@@ -28,7 +28,7 @@ public class ProdProductionStandardsInsert extends BaseInsert {
     private JdbcTemplate produceJdbcTemplate;
     @Override
     public void insert(String[] values) {
-        produceJdbcTemplate.update("INSERT INTO prod_production_standards210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_production_standards" + MyConstants.TABLE_SUFFIX +
                 "(id, standards_name, demand_position, need_detail, founder_name, founder_id, create_on, reply_count, update_time, update_user, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

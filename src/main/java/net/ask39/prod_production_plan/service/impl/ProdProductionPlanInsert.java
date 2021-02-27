@@ -59,7 +59,7 @@ public class ProdProductionPlanInsert extends BaseInsert {
         if(!StringUtils.isEmpty(authorize_schedule)){
             values[8] = String.valueOf(new BigDecimal(authorize_schedule).divide(new BigDecimal(100)).multiply(new BigDecimal(topics_num)).setScale(0, BigDecimal.ROUND_DOWN).intValue());
         }
-        produceJdbcTemplate.update("INSERT INTO prod_production_plan210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_production_plan" + MyConstants.TABLE_SUFFIX +
                 "(id, term_num, demand_position, topics_num, prod_success, done_time, reply_schedule, audit_schedule, authorize_schedule, funder_id, funder_name, create_on, production_standards_id, update_time, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

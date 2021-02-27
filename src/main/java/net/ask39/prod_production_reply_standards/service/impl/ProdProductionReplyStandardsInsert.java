@@ -55,7 +55,7 @@ public class ProdProductionReplyStandardsInsert extends BaseInsert {
             values[8] = scheme_content.replaceAll(MyConstants.SUB, "\n");
             values[8] = scheme_content.replaceAll(MyConstants.HT, MyConstants.ESC);
         }
-        produceJdbcTemplate.update("INSERT INTO prod_production_reply_standards210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_production_reply_standards" + MyConstants.TABLE_SUFFIX +
                 "(id, production_standards_id, low_word_count, high_word_count, reply_standards_detail, title_demo, content_demo, `section`, scheme_content, need_auth, create_on, create_name, update_time, update_name, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

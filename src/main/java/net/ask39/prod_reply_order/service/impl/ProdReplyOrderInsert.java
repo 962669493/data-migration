@@ -78,7 +78,7 @@ public class ProdReplyOrderInsert extends BaseInsert {
         } else {
             values[5] = taskIdReplyNo_producerId.get(values[4] + "" + values[2]);
         }
-        produceJdbcTemplate.update("INSERT INTO prod_reply_order210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply_order" + MyConstants.TABLE_SUFFIX +
                 "(topic_id, task_config_id, reply_no, score, task_id, producer_id, reply_standard_id, status, update_time, create_time)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

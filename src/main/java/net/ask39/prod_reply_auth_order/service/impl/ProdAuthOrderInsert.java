@@ -53,7 +53,7 @@ public class ProdAuthOrderInsert extends BaseInsert {
         }
 
         topicIdReplyNo_replyIdAndReplierId = new HashMap<>(1000000);
-        produceJdbcTemplate.query("select topic_id, reply_no, reply_id, replier_id from prod_reply210224", rs -> {
+        produceJdbcTemplate.query("select topic_id, reply_no, reply_id, replier_id from prod_reply" + MyConstants.TABLE_SUFFIX, rs -> {
             for(;rs.next();){
                 topicIdReplyNo_replyIdAndReplierId.put(rs.getString(1) + rs.getString(2), new Reply(rs.getString(3), rs.getString(4)));
             }
@@ -100,7 +100,7 @@ public class ProdAuthOrderInsert extends BaseInsert {
         }
         // score
         values[9] = String.valueOf(0);
-        produceJdbcTemplate.update("INSERT INTO prod_reply_auth_order210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply_auth_order" + MyConstants.TABLE_SUFFIX +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, score, update_time, create_time)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

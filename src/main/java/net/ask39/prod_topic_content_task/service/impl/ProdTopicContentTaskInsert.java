@@ -33,7 +33,7 @@ public class ProdTopicContentTaskInsert extends BaseInsert {
 
     @Override
     public void insert(String[] values) {
-        produceJdbcTemplate.update("INSERT INTO prod_topic_content_task210224\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_topic_content_task" + MyConstants.TABLE_SUFFIX +
                 "(id, task_name, precedence, state, `type`, topic_condition, topic_amount, complete_amount, completion_rate, is_start, create_on, create_name, update_time, update_name, is_deleted)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }
