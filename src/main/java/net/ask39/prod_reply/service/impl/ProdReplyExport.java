@@ -48,7 +48,7 @@ public class ProdReplyExport {
     public void export() throws SQLException, IOException {
         before();
         int total = 0;
-        PreparedStatement preparedStatement = askdata4Connection.prepareStatement("select tid from AuthTopics where createOn <= '"+ MyConstants.END_TIME + "'");
+        PreparedStatement preparedStatement = askdata4Connection.prepareStatement("select tid from AuthTopics");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Integer> tids = new ArrayList<>(1000);
         for (int i = 0, k = 0; resultSet.next(); i++) {

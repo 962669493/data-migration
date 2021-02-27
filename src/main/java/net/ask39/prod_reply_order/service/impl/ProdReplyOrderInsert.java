@@ -1,5 +1,7 @@
 package net.ask39.prod_reply_order.service.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
 import net.ask39.service.BaseInsert;
@@ -13,7 +15,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -34,6 +38,8 @@ public class ProdReplyOrderInsert extends BaseInsert {
     private JdbcTemplate produceJdbcTemplate;
     private Map<String, String> taskIdReplyNo_taskConfigId;
     private Map<String, String> taskIdReplyNo_producerId;
+    private Set<String> topicIdAndReplyNo;
+    private OutputStream repeatTopicIdAndReplyNo;
 
     @Override
     protected void before() throws Exception {
@@ -47,15 +53,24 @@ public class ProdReplyOrderInsert extends BaseInsert {
                 taskIdReplyNo_producerId.put(values[1] + "" + values[9], producer_id);
             }
         }
+
+        topicIdAndReplyNo = new HashSet<>(1600000);
+        repeatTopicIdAndReplyNo = new FileOutputStream("output/答题工单topicId和replyNo重复.txt", true);
     }
 
     @Override
-    public void insert(String[] values) {
+    public void insert(String[] values) throws IOException {
         values[1] = taskIdReplyNo_taskConfigId.get(values[4] + "" + values[2]);
         // task_config_id
         if (values[1] == null) {
-            values[1] = String.valueOf(Long.MAX_VALUE);
             return;
+        }
+        String topic_id_reply_no = values[0] + values[2];
+        if(topicIdAndReplyNo.contains(topic_id_reply_no)){
+            IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), repeatTopicIdAndReplyNo, MyConstants.CHART_SET);
+            return;
+        }else{
+            topicIdAndReplyNo.add(topic_id_reply_no);
         }
         String producer_id = values[5];
         if (StringUtils.isEmpty(producer_id)) {
@@ -63,7 +78,7 @@ public class ProdReplyOrderInsert extends BaseInsert {
         } else {
             values[5] = taskIdReplyNo_producerId.get(values[4] + "" + values[2]);
         }
-        produceJdbcTemplate.update("INSERT INTO prod_reply_order\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply_order210224\n" +
                 "(topic_id, task_config_id, reply_no, score, task_id, producer_id, reply_standard_id, status, update_time, create_time)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

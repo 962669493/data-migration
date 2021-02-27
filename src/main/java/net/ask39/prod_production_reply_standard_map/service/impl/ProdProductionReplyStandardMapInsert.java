@@ -29,7 +29,7 @@ public class ProdProductionReplyStandardMapInsert extends BaseInsert {
     private JdbcTemplate produceJdbcTemplate;
     @Override
     public void insert(String[] values) {
-        produceJdbcTemplate.update("INSERT INTO prod_production_reply_standard_map\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_production_reply_standard_map210224\n" +
                 "(prod_standard_id, reply_standard_id, reply_no)" +
                 "VALUES(?, ?, ?)", values);
     }

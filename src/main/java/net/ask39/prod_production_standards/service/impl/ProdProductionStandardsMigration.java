@@ -118,9 +118,9 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
         List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
         for(ProductionStandardsDoc productionStandardsDoc : all){
             Date createOn = productionStandardsDoc.getCreateOn();
-            if(createOn.compareTo(endTime) <= 0){
+            //if(createOn.compareTo(endTime) <= 0){
                 process(productionStandardsDoc);
-            }
+            //}
         }
         after();
     }

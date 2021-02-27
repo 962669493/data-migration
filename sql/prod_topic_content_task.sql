@@ -16,4 +16,4 @@ SELECT
 	0 is_deleted
 FROM
 	TopicContentTask
-where CreateOn <= '2021-01-19 10:30:00'
+--where CreateOn <= '2021-01-19 10:30:00'

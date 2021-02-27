@@ -1,5 +1,6 @@
 package net.ask39.prod_reply_audit_order.service.impl;
 
+import com.google.common.base.Joiner;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_reply_audit_order.enums.ReplyAuditStatusEnum;
 import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
@@ -40,7 +41,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     @Override
     protected void before() throws Exception {
         tid_topicId = new HashMap<>(1000000);
-        produceJdbcTemplate.query("select id, tid from prod_topics", rs -> {
+        produceJdbcTemplate.query("select id, tid from prod_topics210224", rs -> {
             for(;rs.next();){
                 tid_topicId.put(rs.getString(2), rs.getString(1));
             }
@@ -77,9 +78,14 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         }
         // task_config_id
         values[1] = String.valueOf(Long.MAX_VALUE);
-        // task_id
-        values[2] = tid_topicId.get(values[2]);
+        // topic_id
+        values[0] = tid_topicId.get(values[0]);
+        if(values[0] == null){
+            // 任务没有生产计划或标准
+            return;
+        }
         if(values[2] == null){
+            // task_id
             values[2] = String.valueOf(Long.MAX_VALUE);
         }
         // assigned_id
@@ -90,7 +96,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         values[7] = String.valueOf(Long.MAX_VALUE);
         // source
         values[9] = String.valueOf(0);
-        produceJdbcTemplate.update("INSERT INTO prod_reply_audit_order\n" +
+        produceJdbcTemplate.update("INSERT INTO prod_reply_audit_order210224\n" +
                 "(topic_id, task_config_id, task_id, assigned_id, reply_id, replier_id, reply_no, reply_standard_id, status, source, reject_types, remark, auditor_id, auditor_name, quality, update_time, create_time, is_batch)\n" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
     }

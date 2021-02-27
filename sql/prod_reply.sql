@@ -16,7 +16,7 @@ SELECT
 	null is_manual_audit,
 	null quality,
 	t1.IsDoctor replier_type,
-	null reject_count,
+	0 reject_count,
 	t1.QcStateID qc_state_id,
 	t1.ForumTreeCode page_forum_tree_code,
 	t1.ForumTreeValue page_forum_tree_value,
@@ -32,4 +32,4 @@ SELECT
 	0 is_delete
 FROM
 	IssuePost t1
-where t1.IsTopic != 1 and t1.VoteNum != 0 and t1.CreateOn <= '2021-01-19 10:30:00'
+where t1.IsTopic != 1 and t1.VoteNum != 0 --and t1.CreateOn <= '2021-01-19 10:30:00'
