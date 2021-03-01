@@ -1,6 +1,5 @@
 package net.ask39.prod_topic_task_config.service.impl;
 
-import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskMigration;
 import net.ask39.service.BaseExport;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ public class ProdTopicTaskConfigExport extends BaseExport {
     public static final String INPUT_TOPIC_TASK_CONFIG_TXT = "input/TopicTaskConfig.txt";
     @Resource(name = "askconfigDataSource")
     DataSource dataSource;
+
     public ProdTopicTaskConfigExport() {
         super(ProdTopicTaskConfigMigration.SQL_FILE_NAME, INPUT_TOPIC_TASK_CONFIG_TXT);
     }

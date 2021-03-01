@@ -1,7 +1,6 @@
 package net.ask39.prod_topic_task_config.service.impl;
 
 import net.ask39.enums.MyConstants;
-import net.ask39.prod_topic_content_task.service.impl.ProdTopicContentTaskMigration;
 import net.ask39.service.BaseInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,8 @@ public class ProdTopicTaskConfigInsert extends BaseInsert {
     @Override
     public void insert(String[] values) {
         String score = values[8];
-        if(!StringUtils.isEmpty(score)){
-            if(Integer.valueOf(score) < 0){
+        if (!StringUtils.isEmpty(score)) {
+            if (Integer.valueOf(score) < 0) {
                 values[8] = "0";
             }
         }

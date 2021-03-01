@@ -1,24 +1,18 @@
 package net.ask39.prod_reply_audit_order.service.impl;
 
-import com.google.common.base.Joiner;
 import net.ask39.enums.MyConstants;
 import net.ask39.prod_reply_audit_order.enums.ReplyAuditStatusEnum;
-import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
 import net.ask39.service.BaseInsert;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 帖子表数据迁移
@@ -42,7 +36,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     protected void before() throws Exception {
         tid_topicId = new HashMap<>(1000000);
         produceJdbcTemplate.query("select id, tid from prod_topics" + MyConstants.TABLE_SUFFIX, rs -> {
-            for(;rs.next();){
+            for (; rs.next(); ) {
                 tid_topicId.put(rs.getString(2), rs.getString(1));
             }
             return null;
@@ -53,7 +47,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     public void insert(String[] values) {
         String auditStatus = values[8];
         ReplyAuditStatusEnum replyAuditStatusEnum = ReplyAuditStatusEnum.getByValue(Integer.parseInt(auditStatus));
-        switch (replyAuditStatusEnum){
+        switch (replyAuditStatusEnum) {
             case Pass:
                 values[8] = "8";
                 break;
@@ -80,11 +74,11 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         values[1] = String.valueOf(Long.MAX_VALUE);
         // topic_id
         values[0] = tid_topicId.get(values[0]);
-        if(values[0] == null){
+        if (values[0] == null) {
             // 任务没有生产计划或标准
             return;
         }
-        if(values[2] == null){
+        if (values[2] == null) {
             // task_id
             values[2] = String.valueOf(Long.MAX_VALUE);
         }

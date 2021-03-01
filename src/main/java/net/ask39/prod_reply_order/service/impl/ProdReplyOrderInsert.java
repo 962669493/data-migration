@@ -65,13 +65,13 @@ public class ProdReplyOrderInsert extends BaseInsert {
         if (values[1] == null) {
             return;
         }
-        String topic_id_reply_no = values[0] + values[2];
+        /*String topic_id_reply_no = values[0] + values[2];
         if(topicIdAndReplyNo.contains(topic_id_reply_no)){
             IOUtils.writeLines(Lists.newArrayList(Joiner.on(MyConstants.ESC).useForNull("null").join(values)), System.getProperty("line.separator"), repeatTopicIdAndReplyNo, MyConstants.CHART_SET);
             return;
         }else{
             topicIdAndReplyNo.add(topic_id_reply_no);
-        }
+        }*/
         String producer_id = values[5];
         if (StringUtils.isEmpty(producer_id)) {
             values[5] = "0";

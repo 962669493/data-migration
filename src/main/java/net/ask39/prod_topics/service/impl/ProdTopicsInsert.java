@@ -1,7 +1,6 @@
 package net.ask39.prod_topics.service.impl;
 
 import net.ask39.enums.MyConstants;
-import net.ask39.prod_topic_task_config.service.impl.ProdTopicTaskConfigMigration;
 import net.ask39.service.BaseInsert;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

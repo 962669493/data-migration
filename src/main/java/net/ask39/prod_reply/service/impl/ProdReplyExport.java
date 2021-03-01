@@ -63,8 +63,16 @@ public class ProdReplyExport {
     }
 
     private int exportReplyByTid(List<Integer> tids) throws IOException, SQLException {
-        String sql = FileUtils.readFileToString(new File(ProdReplyMigration.SQL_FILE_NAME), StandardCharsets.UTF_8) +
-                " and t1.tid in (" + Joiner.on(",").join(tids) + ")";
+        String start = System.getProperty("start");
+        String end = System.getProperty("end");
+        String sql = FileUtils.readFileToString(new File(ProdReplyMigration.SQL_FILE_NAME), StandardCharsets.UTF_8)
+                + " and t1.tid in (" + Joiner.on(",").join(tids) + ")";
+        if(!StringUtils.isEmpty(end)){
+            sql += " and t1.CreateOn <= " + end;
+        }
+        if(StringUtils.isEmpty(start)){
+            sql += " and t1.CreateOn > " + start;
+        }
         //log.info("sql：{}", sql);
         PreparedStatement preparedStatement = askdata5Connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
