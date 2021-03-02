@@ -117,7 +117,6 @@ public class ProdProductionStandardsMigration implements Migration<ProductionSta
         Date endTime = format.parse(MyConstants.END_TIME);
         List<ProductionStandardsDoc> all = productionStandardsDocRepository.findAll();
         for(ProductionStandardsDoc productionStandardsDoc : all){
-            Date createOn = productionStandardsDoc.getCreateOn();
             //if(createOn.compareTo(endTime) <= 0){
                 process(productionStandardsDoc);
             //}

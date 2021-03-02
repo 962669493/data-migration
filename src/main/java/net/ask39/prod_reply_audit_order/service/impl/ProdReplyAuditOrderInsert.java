@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 帖子表数据迁移
@@ -31,6 +33,7 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
     @Resource(name = "produceJdbcTemplate")
     private JdbcTemplate produceJdbcTemplate;
     private Map<String, String> tid_topicId;
+    private Set<String> reply_id;
 
     @Override
     protected void before() throws Exception {
@@ -38,6 +41,13 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         produceJdbcTemplate.query("select id, tid from prod_topics" + MyConstants.TABLE_SUFFIX, rs -> {
             for (; rs.next(); ) {
                 tid_topicId.put(rs.getString(2), rs.getString(1));
+            }
+            return null;
+        });
+        reply_id = new HashSet<>(1500000);
+        produceJdbcTemplate.query("select reply_id from prod_reply_audit_order" + MyConstants.TABLE_SUFFIX, rs -> {
+            for (; rs.next(); ) {
+                reply_id.add(rs.getString(1));
             }
             return null;
         });
@@ -84,6 +94,11 @@ public class ProdReplyAuditOrderInsert extends BaseInsert {
         }
         // assigned_id
         values[3] = String.valueOf(0);
+        if(reply_id.contains(values[4])){
+            return;
+        }else{
+            reply_id.add(values[4]);
+        }
         // reply_no
         values[6] = String.valueOf(0);
         // reply_standard_id

@@ -70,7 +70,7 @@ public class ProdReplyExport {
         if(!StringUtils.isEmpty(end)){
             sql += " and t1.CreateOn <= " + end;
         }
-        if(StringUtils.isEmpty(start)){
+        if(!StringUtils.isEmpty(start)){
             sql += " and t1.CreateOn > " + start;
         }
         //log.info("sql：{}", sql);

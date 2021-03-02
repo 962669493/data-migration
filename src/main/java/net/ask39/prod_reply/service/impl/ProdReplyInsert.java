@@ -128,8 +128,9 @@ public class ProdReplyInsert extends BaseInsert {
         }
         values[10] = String.valueOf(replyScore + doctorScore);
         values[13] = String.valueOf(3);
-        if (!replierIdAndReplierType.isEmpty()) {
-            values[16] = replierIdAndReplierType.get(values[25]);
+        values[16] = replierIdAndReplierType.get(values[25]);
+        if(values[16] == null){
+            values[16] = "255";
         }
         produceJdbcTemplate.update("INSERT INTO prod_reply" + MyConstants.TABLE_SUFFIX +
                 "(id, reply_id, topic_id, forum_id, sources, ip, order_id, reply_no, reply_standard_id, reply_content, score, inner_copy_check_result, outer_copy_ratio, audit_status, is_manual_audit, quality, replier_type, reject_count, qc_state_id, page_forum_tree_code, page_forum_tree_value, page_forum, remark, reply_version, machine_audit_status, replier_id, replier_name, update_user, create_on, update_time, is_deleted)\n" +

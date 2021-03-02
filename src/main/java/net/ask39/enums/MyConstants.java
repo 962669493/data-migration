@@ -19,7 +19,7 @@ public class MyConstants {
     /** IO编码格式 */
     public static final Charset CHART_SET = StandardCharsets.UTF_8;
     /** 表名后缀 */
-    public static final String TABLE_SUFFIX = "210225";
+    public static final String TABLE_SUFFIX = "210301";
 
     public static final String END_TIME = "2021-01-19 10:30:00";
 }
